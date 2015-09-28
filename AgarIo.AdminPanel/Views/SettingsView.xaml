@@ -1,0 +1,90 @@
+﻿<UserControl x:Class="AgarIo.AdminPanel.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <Label Grid.Row="0" Grid.Column="0" Content="MinPlayerBlobMass" />
+        <ContentControl Grid.Row="0" Grid.Column="1" x:Name="MinPlayerBlobMass" />
+        <Label Grid.Row="1" Grid.Column="0" Content="MaxPlayerBlobMass" />
+        <ContentControl Grid.Row="1" Grid.Column="1" x:Name="MaxPlayerBlobMass" />
+        <Label Grid.Row="2" Grid.Column="0" Content="VisibilityFactor" />
+        <ContentControl Grid.Row="2" Grid.Column="1" x:Name="VisibilityFactor" />
+        <Label Grid.Row="3" Grid.Column="0" Content="MassGainFactor" />
+        <ContentControl Grid.Row="3" Grid.Column="1" x:Name="MassGainFactor" />
+        <Label Grid.Row="4" Grid.Column="0" Content="RecombineWaitTimeMassFactor" />
+        <ContentControl Grid.Row="4" Grid.Column="1" x:Name="RecombineWaitTimeMassFactor" />
+        <Label Grid.Row="5" Grid.Column="0" Content="MassLossPerTick" />
+        <ContentControl Grid.Row="5" Grid.Column="1" x:Name="MassLossPerTick" />
+        <Label Grid.Row="6" Grid.Column="0" Content="MoveDecayPerTick" />
+        <ContentControl Grid.Row="6" Grid.Column="1" x:Name="MoveDecayPerTick" />
+        <Label Grid.Row="7" Grid.Column="0" Content="PlayerEatingRangeFactor" />
+        <ContentControl Grid.Row="7" Grid.Column="1" x:Name="PlayerEatingRangeFactor" />
+        <Label Grid.Row="8" Grid.Column="0" Content="VirusEatingRangeFactor" />
+        <ContentControl Grid.Row="8" Grid.Column="1" x:Name="VirusEatingRangeFactor" />
+        <Label Grid.Row="9" Grid.Column="0" Content="SplitSpeedFactor" />
+        <ContentControl Grid.Row="9" Grid.Column="1" x:Name="SplitSpeedFactor" />
+        <Label Grid.Row="0" Grid.Column="2" Content="VirusMassMultiplier" />
+        <ContentControl Grid.Row="0" Grid.Column="3" x:Name="VirusMassMultiplier" />
+        <Label Grid.Row="1" Grid.Column="2" Content="StandardEatingMassMultiplier" />
+        <ContentControl Grid.Row="1" Grid.Column="3" x:Name="StandardEatingMassMultiplier" />
+        <Label Grid.Row="2" Grid.Column="2" Content="MaxPlayerBlobCount" />
+        <ContentControl Grid.Row="2" Grid.Column="3" x:Name="MaxPlayerBlobCount" />
+        <Label Grid.Row="3" Grid.Column="2" Content="FoodSpawnAmount" />
+        <ContentControl Grid.Row="3" Grid.Column="3" x:Name="FoodSpawnAmount" />
+        <Label Grid.Row="4" Grid.Column="2" Content="MaxFoodCount" />
+        <ContentControl Grid.Row="4" Grid.Column="3" x:Name="MaxFoodCount" />
+        <Label Grid.Row="5" Grid.Column="2" Content="FoodMass" />
+        <ContentControl Grid.Row="5" Grid.Column="3" x:Name="FoodMass" />
+        <Label Grid.Row="6" Grid.Column="2" Content="VirusMinAmount" />
+        <ContentControl Grid.Row="6" Grid.Column="3" x:Name="VirusMinAmount" />
+        <Label Grid.Row="7" Grid.Column="2" Content="VirusMaxAmount" />
+        <ContentControl Grid.Row="7" Grid.Column="3" x:Name="VirusMaxAmount" />
+        <Label Grid.Row="8" Grid.Column="2" Content="VirusMinMass" />
+        <ContentControl Grid.Row="8" Grid.Column="3" x:Name="VirusMinMass" />
+        <Label Grid.Row="9" Grid.Column="2" Content="VirusFeedAmount" />
+        <ContentControl Grid.Row="9" Grid.Column="3" x:Name="VirusFeedAmount" />
+        <Label Grid.Row="0" Grid.Column="4" Content="EjectMass" />
+        <ContentControl Grid.Row="0" Grid.Column="5" x:Name="EjectMass" />
+        <Label Grid.Row="1" Grid.Column="4" Content="EjectMassLoss" />
+        <ContentControl Grid.Row="1" Grid.Column="5" x:Name="EjectMassLoss" />
+        <Label Grid.Row="2" Grid.Column="4" Content="EjectSpeed" />
+        <ContentControl Grid.Row="2" Grid.Column="5" x:Name="EjectSpeed" />
+        <Label Grid.Row="3" Grid.Column="4" Content="MinMassEject" />
+        <ContentControl Grid.Row="3" Grid.Column="5" x:Name="MinMassEject" />
+        <Label Grid.Row="4" Grid.Column="4" Content="MinMassSplit" />
+        <ContentControl Grid.Row="4" Grid.Column="5" x:Name="MinMassSplit" />
+        <Label Grid.Row="5" Grid.Column="4" Content="InitialFoodAmount" />
+        <ContentControl Grid.Row="5" Grid.Column="5" x:Name="InitialFoodAmount" />
+        <Label Grid.Row="6" Grid.Column="4" Content="RecombineWaitTicks" />
+        <ContentControl Grid.Row="6" Grid.Column="5" x:Name="RecombineWaitTicks" />
+        <Label Grid.Row="7" Grid.Column="4" Content="FoodSpawnTicksInterval" />
+        <ContentControl Grid.Row="7" Grid.Column="5" x:Name="FoodSpawnTicksInterval" />
+        <Label Grid.Row="8" Grid.Column="4" Content="VirusSpawnTicksInterval" />
+        <ContentControl Grid.Row="8" Grid.Column="5" x:Name="VirusSpawnTicksInterval" />
+    </Grid>
+</UserControl>

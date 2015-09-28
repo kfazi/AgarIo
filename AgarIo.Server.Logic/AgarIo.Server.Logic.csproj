@@ -31,10 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FarseerPhysics, Version=3.5.0.38023, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FarseerPhysics.3.5.0\lib\NET40\FarseerPhysics.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="NLog, Version=4.1.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.1.0\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
@@ -83,13 +79,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\downloaded\ChipmunkSharp\src\ChipmunkSharp\win32\ChipmunkSharp.Win32.csproj">
-      <Project>{fd50437f-b756-4bd8-99be-b723f6e1eb45}</Project>
-      <Name>ChipmunkSharp.Win32</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AgarIo.SystemExtension\AgarIo.SystemExtension.csproj">
       <Project>{2417bfd9-2bba-4e38-b09e-9437e42a53fa}</Project>
       <Name>AgarIo.SystemExtension</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ChipmunkSharp\win32\ChipmunkSharp.Win32.csproj">
+      <Project>{fd50437f-b756-4bd8-99be-b723f6e1eb45}</Project>
+      <Name>ChipmunkSharp.Win32</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
