@@ -10,7 +10,8 @@
 
         private int _fed;
 
-        public VirusBlob(IGame game, IPhysics physics, Vector position) : base(game, physics, position, game.Settings.VirusMinMass)
+        public VirusBlob(IGame game, IPhysics physics, IStateTracker stateTracker, Vector position)
+            : base(game, physics, stateTracker, position, game.Settings.VirusMinMass)
         {
             _physics = physics;
 
@@ -63,7 +64,7 @@
             }
 
             var normalizedVelocity = blob.Velocity.Normalize();
-            var virus = new VirusBlob(Game, _physics, Position + normalizedVelocity)
+            var virus = new VirusBlob(Game, _physics, StateTracker, Position + normalizedVelocity)
             {
                 Velocity = normalizedVelocity * 200
             };
@@ -144,7 +145,7 @@
         private void SplitConsumer(PlayerBlob consumer, float splitMass, Vector direction)
         {
             var speed = consumer.Velocity.Length * Game.Settings.SplitSpeedFactor;
-            var split = new PlayerBlob(consumer.Owner, Game, _physics, consumer.Position, false)
+            var split = new PlayerBlob(consumer.Owner, Game, _physics, StateTracker, consumer.Position, false)
             {
                 Velocity = direction * speed,
                 Mass = splitMass

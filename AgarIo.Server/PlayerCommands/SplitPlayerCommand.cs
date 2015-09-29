@@ -5,7 +5,6 @@ namespace AgarIo.Server.PlayerCommands
     using AgarIo.Contract.PlayerCommands;
     using AgarIo.Server.CommandExceptions;
     using AgarIo.Server.Logic;
-    using AgarIo.Server.Logic.Blobs;
 
     public class SplitPlayerCommand : PlayerCommand
     {
@@ -16,7 +15,7 @@ namespace AgarIo.Server.PlayerCommands
                 throw new GameNotStartedException();
             }
 
-            if (!player.Blobs.Any())
+            if (!player.Blobs.Any() && !player.Join)
             {
                 throw new NotJoinedException();
             }

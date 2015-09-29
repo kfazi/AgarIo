@@ -1,13 +1,21 @@
 namespace AgarIo.AdminPanel.ViewModels
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    using AgarIo.AdminPanel.Events;
     using AgarIo.Contract;
+    using AgarIo.Contract.AdminCommands;
 
     using Caliburn.Micro;
 
-    public class SettingsViewModel : Screen
+    public class SettingsViewModel : Screen, IHandle<SnapshotEvent>
     {
-        public SettingsViewModel()
+        private readonly IConnection _connection;
+
+        public SettingsViewModel(IEventAggregator eventAggregator, IConnection connection)
         {
+            _connection = connection;
             MinPlayerBlobMass = new UpdateableFieldViewModel<float>();
             MaxPlayerBlobMass = new UpdateableFieldViewModel<float>();
             VisibilityFactor = new UpdateableFieldViewModel<float>();
@@ -47,6 +55,8 @@ namespace AgarIo.AdminPanel.ViewModels
             VisibilityFactor.AddValidationRule(x => x.Value)
                .Condition(x => x.Value > 0)
                .Message("VisibilityFactor must be positive");
+
+            eventAggregator.Subscribe(this);
         }
 
         public UpdateableFieldViewModel<float> MinPlayerBlobMass { get; }
@@ -174,6 +184,20 @@ namespace AgarIo.AdminPanel.ViewModels
                 FoodSpawnTicksInterval = FoodSpawnTicksInterval.Value,
                 VirusSpawnTicksInterval = VirusSpawnTicksInterval.Value
             };
+        }
+
+        public void Handle(SnapshotEvent message)
+        {
+            var snapshot = message.Snapshot;
+
+            UpdateFromServer(snapshot.WorldSettings);
+        }
+
+        public async Task SendToServerAsync()
+        {
+            await _connection.DispatchCommandAsync<AdminCommandResponseDto>(
+                new UpdateSettingsAdminCommandDto { Settings = GetWorldSettingsDto() },
+                CancellationToken.None);
         }
     }
 }

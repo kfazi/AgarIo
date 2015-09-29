@@ -5,35 +5,88 @@ namespace AgarIo.Server.Connections
     using System.Threading.Tasks;
     using System.Threading.Tasks.Dataflow;
 
+    using AgarIo.Contract;
+    using AgarIo.Contract.AdminCommands;
     using AgarIo.Contract.PlayerCommands;
     using AgarIo.Server.AdminCommands;
     using AgarIo.Server.CommandExceptions;
     using AgarIo.Server.Logic;
     using AgarIo.SystemExtension;
 
+    using AutoMapper;
+
     public class AdminConnection : IConnection
     {
+        private enum PushDataState
+        {
+            None,
+
+            First,
+
+            Continue
+        }
+
         private readonly IAdminCommandFactory _adminCommandFactory;
+
+        private readonly IStateTracker _stateTracker;
+
+        private readonly IGame _game;
 
         private readonly BufferBlock<string> _dataToSend;
 
-        public AdminConnection(IAdminCommandFactory adminCommandFactory)
+        private PushDataState _pushDataState;
+
+        public AdminConnection(IAdminCommandFactory adminCommandFactory, IStateTracker stateTracker, IGame game)
         {
             _adminCommandFactory = adminCommandFactory;
+            _stateTracker = stateTracker;
+            _game = game;
 
             _dataToSend = new BufferBlock<string>();
+
+            _pushDataState = PushDataState.None;
         }
 
-        public async Task RunAsync(IGame game, TextReader reader, TextWriter writer, CancellationTokenSource cancellationTokenSource)
+        public async Task RunAsync(TextReader reader, TextWriter writer, CancellationTokenSource cancellationTokenSource)
         {
-            var handleIncomingDataTask = HandleIncomingDataAsync(game, reader, cancellationTokenSource.Token);
+            var handleIncomingDataTask = HandleIncomingDataAsync(reader, cancellationTokenSource.Token);
             var handleOutgoingDataTask = HandleOutgoingDataAsync(writer, cancellationTokenSource.Token);
             await Task.WhenAny(handleIncomingDataTask, handleOutgoingDataTask);
             cancellationTokenSource.Cancel();
             await Task.WhenAll(handleIncomingDataTask, handleOutgoingDataTask);
         }
 
-        private async Task HandleIncomingDataAsync(IGame game, TextReader reader, CancellationToken cancellationToken)
+        public void Update()
+        {
+            if (_pushDataState == PushDataState.None)
+            {
+                return;
+            }
+
+            var statePushDto = new StatePushDto
+            {
+                WorldSize = _game.Size
+            };
+
+            if (_pushDataState == PushDataState.First)
+            {
+                statePushDto.AddedBlobs = Mapper.Map<BlobDto[]>(_game.Blobs);
+                statePushDto.RemovedBlobs = new BlobDto[] { };
+                statePushDto.UpdatedBlobs = new BlobDto[] { };
+            }
+
+            if (_pushDataState == PushDataState.Continue)
+            {
+                statePushDto.AddedBlobs = Mapper.Map<BlobDto[]>(_stateTracker.AddedBlobs);
+                statePushDto.RemovedBlobs = Mapper.Map<BlobDto[]>(_stateTracker.RemovedBlobs);
+                statePushDto.UpdatedBlobs = Mapper.Map<BlobDto[]>(_stateTracker.UpdatedBlobs);
+            }
+
+            Send(statePushDto);
+            _pushDataState = PushDataState.Continue;
+        }
+
+        private async Task HandleIncomingDataAsync(TextReader reader, CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -45,10 +98,15 @@ namespace AgarIo.Server.Connections
                         continue;
                     }
 
-                    command.Validate(game);
+                    command.Validate(_game);
 
-                    var commandResponseDto = command.Execute(game);
+                    var commandResponseDto = command.Execute(_game);
                     Send(commandResponseDto);
+
+                    if (command is StartPushingStateAdminCommand)
+                    {
+                        _pushDataState = PushDataState.First;
+                    }
                 }
                 catch (CommandException exception)
                 {

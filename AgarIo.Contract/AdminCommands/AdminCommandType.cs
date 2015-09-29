@@ -4,6 +4,10 @@
     {
         DefineWorld,
 
-        GetSnapshot
+        GetSnapshot,
+
+        StartPushingState,
+
+        UpdateSettings
     }
 }

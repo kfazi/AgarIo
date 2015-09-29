@@ -7,15 +7,18 @@
 
     public class FoodSpawner : EntitiesSpawner
     {
-        public FoodSpawner(IGame game, IPhysics physics) : base(game, physics)
+        private readonly IStateTracker _stateTracker;
+
+        public FoodSpawner(IGame game, IPhysics physics, IStateTracker stateTracker) : base(game, physics)
         {
+            _stateTracker = stateTracker;
         }
 
         protected override void SpawnEntity()
         {
             var position = Game.GetRandomPosition();
 
-            var foodBlob = new FoodBlob(Game, Physics, position);
+            var foodBlob = new FoodBlob(Game, Physics, _stateTracker, position);
 
             Game.AddBlob(foodBlob);
         }

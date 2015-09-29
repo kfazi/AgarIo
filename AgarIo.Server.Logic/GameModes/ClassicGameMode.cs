@@ -9,9 +9,13 @@ namespace AgarIo.Server.Logic.GameModes
     {
         private readonly List<EntitiesSpawner> _entitiesSpawners;
 
-        public ClassicGameMode(IGame game, IPhysics physics)
+        public ClassicGameMode(IGame game, IPhysics physics, IStateTracker stateTracker)
         {
-            _entitiesSpawners = new List<EntitiesSpawner> { new FoodSpawner(game, physics), new VirusSpawner(game, physics) };
+            _entitiesSpawners = new List<EntitiesSpawner>
+            {
+                new FoodSpawner(game, physics, stateTracker),
+                new VirusSpawner(game, physics, stateTracker)
+            };
         }
 
         public void OnStart()

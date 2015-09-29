@@ -6,5 +6,7 @@ namespace AgarIo.Server.Connections
     public interface IConnectionListener
     {
         Task RunAsync(CancellationToken cancellationToken);
+
+        void Update();
     }
 }

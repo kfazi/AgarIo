@@ -18,16 +18,19 @@
 
         private readonly IPlayerRepository _playerRepository;
 
+        private readonly IGame _game;
+
         private readonly BufferBlock<string> _dataToSend;
 
         private readonly LoginDto _loginDto;
 
         private Player _player;
 
-        public PlayerConnection(LoginDto loginDto, IPlayerCommandFactory playerCommandFactory, IPlayerRepository playerRepository)
+        public PlayerConnection(LoginDto loginDto, IPlayerCommandFactory playerCommandFactory, IPlayerRepository playerRepository, IGame game)
         {
             _playerCommandFactory = playerCommandFactory;
             _playerRepository = playerRepository;
+            _game = game;
 
             _loginDto = loginDto;
 
@@ -35,13 +38,12 @@
         }
 
         public async Task RunAsync(
-            IGame game,
             TextReader reader,
             TextWriter writer,
             CancellationTokenSource cancellationTokenSource)
         {
             _player = _playerRepository.Register(_loginDto.Login, _loginDto.Password);
-            var handleIncomingDataTask = HandleIncomingDataAsync(reader, game, cancellationTokenSource.Token);
+            var handleIncomingDataTask = HandleIncomingDataAsync(reader, cancellationTokenSource.Token);
             var handleOutgoingDataTask = HandleOutgoingDataAsync(writer, cancellationTokenSource.Token);
             await Task.WhenAny(handleIncomingDataTask, handleOutgoingDataTask);
             cancellationTokenSource.Cancel();
@@ -49,7 +51,11 @@
             _playerRepository.Unregister(_player);
         }
 
-        private async Task HandleIncomingDataAsync(TextReader reader, IGame game, CancellationToken cancellationToken)
+        public void Update()
+        {
+        }
+
+        private async Task HandleIncomingDataAsync(TextReader reader, CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -61,9 +67,9 @@
                         continue;
                     }
 
-                    command.Validate(_player, game);
+                    command.Validate(_player, _game);
 
-                    var commandResponseDto = command.Execute(_player, game);
+                    var commandResponseDto = command.Execute(_player, _game);
                     Send(commandResponseDto);
                 }
                 catch (CommandException exception)

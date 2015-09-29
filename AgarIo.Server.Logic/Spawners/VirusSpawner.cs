@@ -7,15 +7,18 @@
 
     public class VirusSpawner : EntitiesSpawner
     {
-        public VirusSpawner(IGame game, IPhysics physics) : base(game, physics)
+        private readonly IStateTracker _stateTracker;
+
+        public VirusSpawner(IGame game, IPhysics physics, IStateTracker stateTracker) : base(game, physics)
         {
+            _stateTracker = stateTracker;
         }
 
         protected override void SpawnEntity()
         {
             var position = Game.RemoveFoodAndGetSpawnPosition();
 
-            var virusBlob = new VirusBlob(Game, Physics, position);
+            var virusBlob = new VirusBlob(Game, Physics, _stateTracker, position);
 
             Game.AddBlob(virusBlob);
         }

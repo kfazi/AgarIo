@@ -1,13 +1,10 @@
 ﻿namespace AgarIo.Server.PlayerCommands
 {
-    using System;
-    using System.Collections.Generic;
     using System.Linq;
 
     using AgarIo.Contract.PlayerCommands;
     using AgarIo.Server.CommandExceptions;
     using AgarIo.Server.Logic;
-    using AgarIo.Server.Logic.Blobs;
     using AgarIo.Server.Logic.Physics;
 
     public class MovePlayerCommand : PlayerCommand
@@ -26,7 +23,7 @@
                 throw new GameNotStartedException();
             }
 
-            if (!player.Blobs.Any())
+            if (!player.Blobs.Any() && !player.Join)
             {
                 throw new NotJoinedException();
             }

@@ -28,7 +28,7 @@
                 throw new GameNotStartedException();
             }
 
-            if (!player.Blobs.Any())
+            if (!player.Blobs.Any() && !player.Join)
             {
                 throw new NotJoinedException();
             }

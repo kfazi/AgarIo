@@ -9,8 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AgarIo.Contract</RootNamespace>
     <AssemblyName>AgarIo.Contract</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,7 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net20\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -51,6 +53,9 @@
     <Compile Include="AdminCommands\DefineWorldAdminCommandDto.cs" />
     <Compile Include="AdminCommands\GetSnapshotAdminCommandDto.cs" />
     <Compile Include="AdminCommands\GetSnapshotAdminCommandResponseDto.cs" />
+    <Compile Include="AdminCommands\StartPushingStateAdminCommandDto.cs" />
+    <Compile Include="AdminCommands\StatePushDto.cs" />
+    <Compile Include="AdminCommands\UpdateSettingsAdminCommandDto.cs" />
     <Compile Include="BlobType.cs" />
     <Compile Include="PlayerCommands\EjectMassPlayerCommandDto.cs" />
     <Compile Include="PlayerCommands\PlayerCommandResponseDto.cs" />

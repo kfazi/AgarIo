@@ -1,7 +1,5 @@
 namespace AgarIo.Server.AdminCommands
 {
-    using System;
-
     using AgarIo.Contract;
     using AgarIo.Contract.AdminCommands;
     using AgarIo.Contract.PlayerCommands;

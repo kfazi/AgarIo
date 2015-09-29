@@ -11,13 +11,18 @@ namespace AgarIo.Server.AdminCommands
     using AgarIo.Server.Logic.Physics;
     using AgarIo.SystemExtension;
 
+    using AutoMapper;
+
     public class AdminCommandFactory : IAdminCommandFactory
     {
         private readonly IPhysics _physics;
 
-        public AdminCommandFactory(IPhysics physics)
+        private readonly IStateTracker _stateTracker;
+
+        public AdminCommandFactory(IPhysics physics, IStateTracker stateTracker)
         {
             _physics = physics;
+            _stateTracker = stateTracker;
         }
 
         public async Task<AdminCommand> CreateAsync(TextReader reader, CancellationToken cancellationToken)
@@ -33,9 +38,15 @@ namespace AgarIo.Server.AdminCommands
             {
                 case AdminCommandType.DefineWorld:
                     var defineWorldAdminCommandDto = json.FromJson<DefineWorldAdminCommandDto>();
-                    return new DefineWorldAdminCommand(defineWorldAdminCommandDto.Size, _physics);
+                    return new DefineWorldAdminCommand(defineWorldAdminCommandDto.Size, _physics, _stateTracker);
                 case AdminCommandType.GetSnapshot:
                     return new GetSnapshotAdminCommand();
+                case AdminCommandType.StartPushingState:
+                    return new StartPushingStateAdminCommand();
+                case AdminCommandType.UpdateSettings:
+                    var updateSettingsAdminCommandDto = json.FromJson<UpdateSettingsAdminCommandDto>();
+                    var settings = Mapper.Map<WorldSettings>(updateSettingsAdminCommandDto.Settings);
+                    return new UpdateSettingsAdminCommand(settings);
                 default:
                     throw new ArgumentOutOfRangeException();
             }

@@ -21,24 +21,26 @@
     {
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
+        private static readonly object ConnectionsLock = new object();
+
         private readonly IConnectionSettings _connectionSettings;
 
         private readonly IConnectionFactory _connectionFactory;
 
         private readonly IPlayerRepository _playerRepository;
 
-        private readonly IGame _game;
+        private readonly List<IConnection> _connections;
 
         public ConnectionListener(
-            IGame game,
             IConnectionSettings connectionSettings,
             IConnectionFactory connectionFactory,
             IPlayerRepository playerRepository)
         {
-            _game = game;
             _connectionSettings = connectionSettings;
             _connectionFactory = connectionFactory;
             _playerRepository = playerRepository;
+
+            _connections = new List<IConnection>();
         }
 
         public async Task RunAsync(CancellationToken cancellationToken)
@@ -49,6 +51,17 @@
             Log.Info($"Listening on *:{_connectionSettings.Port}");
 
             await HandleConnectionsAsync(listener, cancellationToken);
+        }
+
+        public void Update()
+        {
+            lock (ConnectionsLock)
+            {
+                foreach (var connection in _connections)
+                {
+                    connection.Update();
+                }
+            }
         }
 
         private async Task HandleConnectionsAsync(TcpListener listener, CancellationToken cancellationToken)
@@ -102,7 +115,15 @@
             await writer.WriteLineAsync(commandResponseDto.ToJson());
 
             var connection = _connectionFactory.Create(loginDto);
-            await connection.RunAsync(_game, reader, writer, cancellationTokenSource);
+            lock (ConnectionsLock)
+            {
+                _connections.Add(connection);
+            }
+            await connection.RunAsync(reader, writer, cancellationTokenSource);
+            lock (ConnectionsLock)
+            {
+                _connections.Remove(connection);
+            }
         }
 
         private bool TryAuthorize(LoginDto loginDto)

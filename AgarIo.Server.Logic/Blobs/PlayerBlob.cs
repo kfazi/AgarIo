@@ -8,7 +8,8 @@ namespace AgarIo.Server.Logic.Blobs
     {
         private readonly IPhysics _physics;
 
-        public PlayerBlob(Player owner, IGame game, IPhysics physics, Vector position, bool controlledByPlayer) : base(game, physics, position, game.Settings.MinPlayerBlobMass)
+        public PlayerBlob(Player owner, IGame game, IPhysics physics, IStateTracker stateTracker, Vector position, bool controlledByPlayer)
+            : base(game, physics, stateTracker, position, game.Settings.MinPlayerBlobMass)
         {
             _physics = physics;
             Owner = owner;
@@ -183,7 +184,7 @@ namespace AgarIo.Server.Logic.Blobs
 
             Mass = newMass;
 
-            var split = new PlayerBlob(Owner, Game, _physics, Position, false)
+            var split = new PlayerBlob(Owner, Game, _physics, StateTracker, Position, false)
             {
                 Mass = newMass,
                 Velocity = Velocity * Game.Settings.SplitSpeedFactor
@@ -210,7 +211,7 @@ namespace AgarIo.Server.Logic.Blobs
 
             var ejectedMassBlobPosition = Position + (normalizedVelocity * (Radius + GetRadius(ejectMass)));
 
-            var ejectedMassBlob = new EjectedMassBlob(Game, _physics, ejectedMassBlobPosition)
+            var ejectedMassBlob = new EjectedMassBlob(Game, _physics, StateTracker, ejectedMassBlobPosition)
             {
                 Mass = ejectMass,
                 Velocity = ejectVelocity

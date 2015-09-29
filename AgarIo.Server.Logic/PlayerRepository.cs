@@ -1,9 +1,7 @@
-namespace AgarIo.Server
+namespace AgarIo.Server.Logic
 {
     using System.Collections.Generic;
     using System.Linq;
-
-    using AgarIo.Server.Logic;
 
     public class PlayerRepository : IPlayerRepository
     {
@@ -28,7 +26,11 @@ namespace AgarIo.Server
                 var player = _registeredPlayers.FirstOrDefault(x => x.Name == name) ?? new Player(name, password);
 
                 _unregisteredPlayers.Remove(player);
-                _registeredPlayers.Add(player);
+
+                if (!_registeredPlayers.Contains(player))
+                {
+                    _registeredPlayers.Add(player);
+                }
 
                 return player;
             }
@@ -44,7 +46,11 @@ namespace AgarIo.Server
                 }
 
                 _registeredPlayers.Remove(player);
-                _unregisteredPlayers.Add(player);
+
+                if (!_unregisteredPlayers.Contains(player))
+                {
+                    _unregisteredPlayers.Add(player);
+                }
             }
         }
 

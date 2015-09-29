@@ -4,7 +4,8 @@
 
     public class FoodBlob : Blob
     {
-        public FoodBlob(IGame game, IPhysics physics, Vector position) : base(game, physics, position, game.Settings.FoodMass)
+        public FoodBlob(IGame game, IPhysics physics, IStateTracker stateTracker, Vector position)
+            : base(game, physics, stateTracker, position, game.Settings.FoodMass)
         {
             MakeStatic();
         }

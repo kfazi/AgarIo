@@ -26,9 +26,10 @@ namespace AgarIo.Server
             builder.RegisterType<PlayerCommandFactory>().As<IPlayerCommandFactory>();
             builder.RegisterType<ConnectionFactory>().As<IConnectionFactory>();
             builder.RegisterType<RandomWrap>().As<IRandom>();
-            builder.RegisterType<PlayerRepository>().As<IPlayerRepository>();
+            builder.RegisterType<PlayerRepository>().As<IPlayerRepository>().InstancePerLifetimeScope();
             builder.RegisterType<ChipmunkPhysics>().As<IPhysics>().InstancePerLifetimeScope();
             builder.RegisterType<Game>().As<IGame>().InstancePerLifetimeScope();
+            builder.RegisterType<StateTracker>().As<IStateTracker>().InstancePerLifetimeScope();
 
             return builder.Build();
         }

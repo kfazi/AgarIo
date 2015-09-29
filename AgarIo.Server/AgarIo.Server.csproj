@@ -88,6 +88,8 @@
     <Compile Include="AdminCommands\AdminCommand.cs" />
     <Compile Include="AdminCommands\AdminCommandFactory.cs" />
     <Compile Include="AdminCommands\GetSnapshotAdminCommand.cs" />
+    <Compile Include="AdminCommands\StartPushingStateAdminCommand.cs" />
+    <Compile Include="AdminCommands\UpdateSettingsAdminCommand.cs" />
     <Compile Include="AutofacSetup.cs" />
     <Compile Include="AutoMapperSetup.cs" />
     <Compile Include="CommandExceptions\AlreadyJoinedException.cs" />
@@ -106,7 +108,6 @@
     <Compile Include="Connections\ConnectionListener.cs" />
     <Compile Include="AdminCommands\DefineWorldAdminCommand.cs" />
     <Compile Include="Infrastructure\JsonTextReaderExtensions.cs" />
-    <Compile Include="IPlayerRepository.cs" />
     <Compile Include="PlayerCommands\EjectMassPlayerCommand.cs" />
     <Compile Include="PlayerCommands\GetViewPlayerCommand.cs" />
     <Compile Include="Infrastructure\HostConfiguratorExtensions.cs" />
@@ -127,7 +128,6 @@
     <Compile Include="PlayerCommands\PlayerCommandFactory.cs" />
     <Compile Include="Connections\PlayerConnection.cs" />
     <Compile Include="PlayerCommands\SplitPlayerCommand.cs" />
-    <Compile Include="PlayerRepository.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -105,6 +105,7 @@
     <Compile Include="AppBootstrapper.cs" />
     <Compile Include="AppSettings.cs" />
     <Compile Include="ConnectionThread.cs" />
+    <Compile Include="Events\SnapshotEvent.cs" />
     <Compile Include="ViewModels\ArenaViewModel.cs" />
     <Compile Include="Events\ConnectingEvent.cs" />
     <Compile Include="Events\ConnectedEvent.cs" />
@@ -117,8 +118,23 @@
     <Compile Include="Events\EndWorkEvent.cs" />
     <Compile Include="IConnection.cs" />
     <Compile Include="Events\LoggedInEvent.cs" />
+    <Compile Include="Caliburn\Micro\Validation\ExpressionExtensions.cs" />
+    <Compile Include="Caliburn\Micro\Validation\ISupportValidation.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Events\StartWorkEvent.cs" />
+    <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\UpdateableFieldViewModel.cs" />
+    <Compile Include="Caliburn\Micro\Validation\ValidatingPropertyChangedBase.cs" />
+    <Compile Include="Caliburn\Micro\Validation\FluentValidationRule.cs" />
+    <Compile Include="Caliburn\Micro\Validation\Validator.cs" />
+    <Page Include="Views\SettingsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\UpdateableFieldView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\ArenaView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -131,7 +147,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="Caliburn\Micro\Logging\DebugLogger.cs" />
     <Page Include="SharedConverters.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

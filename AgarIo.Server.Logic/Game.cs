@@ -21,14 +21,20 @@
 
         private readonly IPhysics _physics;
 
-        public Game(IRandom random, IPhysics physics)
+        private readonly IStateTracker _stateTracker;
+
+        private readonly IPlayerRepository _playerRepository;
+
+        public Game(IRandom random, IPhysics physics, IStateTracker stateTracker, IPlayerRepository playerRepository)
         {
             _physics = physics;
+            _stateTracker = stateTracker;
+            _playerRepository = playerRepository;
             Random = random;
 
             _blobs = new List<Blob>();
             Settings = new WorldSettings();
-            GameMode = new ClassicGameMode(this, physics);
+            GameMode = new ClassicGameMode(this, physics, stateTracker);
 
             Stop();
         }
@@ -50,7 +56,7 @@
             }
         }
 
-        public WorldSettings Settings { get; }
+        public WorldSettings Settings { get; set; }
 
         public IGameMode GameMode { get; private set; }
 
@@ -75,6 +81,16 @@
         {
             lock (BlobsListLock)
             {
+                foreach (var blob in _blobs)
+                {
+                    _stateTracker.RemoveBlob(blob);
+                }
+
+                foreach (var player in _playerRepository.Players)
+                {
+                    player.Clear();
+                }
+
                 _blobs.Clear();
             }
 
@@ -132,6 +148,8 @@
                 return;
             }
 
+            _stateTracker.Reset();
+
             GameMode.OnUpdate();
 
             ApplyPlayerDecisions();
@@ -147,8 +165,25 @@
         {
             lock (BlobsListLock)
             {
-                foreach (var player in _blobs.OfType<PlayerBlob>().Select(blob => blob.Owner).Distinct())
+                foreach (var player in _playerRepository.Players)
                 {
+                    if (player.Join)
+                    {
+                        var position = RemoveFoodAndGetSpawnPosition();
+                        var playerBlob = new PlayerBlob(player, this, _physics, _stateTracker, position, true);
+
+                        AddBlob(playerBlob);
+
+                        player.Join = false;
+
+                        continue;
+                    }
+
+                    if (!player.Blobs.Any())
+                    {
+                        continue;
+                    }
+
                     var center = DetermineGoosCenter(player.Blobs);
 
                     var direction = player.PlayerDecisions.Velocity;

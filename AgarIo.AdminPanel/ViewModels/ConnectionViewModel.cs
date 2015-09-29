@@ -1,20 +1,25 @@
 namespace AgarIo.AdminPanel.ViewModels
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Windows.Threading;
+
     using AgarIo.AdminPanel.Events;
     using AgarIo.Contract;
     using AgarIo.Contract.AdminCommands;
 
     using Caliburn.Micro;
 
-    public class ConnectionViewModel : Screen, IHandleWithTask<ConnectedEvent>, IHandle<DisconnectedEvent>, IHandle<ConnectingEvent>
+    public class ConnectionViewModel : Screen, IHandleWithTask<ConnectedEvent>, IHandle<DisconnectedEvent>, IHandle<ConnectingEvent>, IHandle<LoggedInEvent>
     {
         private readonly IEventAggregator _eventAggregator;
 
         private readonly IConnection _connection;
 
         private CancellationTokenSource _cancellationTokenSource;
+
+        private readonly DispatcherTimer _dispatcherTimer;
 
         private string _userName;
 
@@ -42,6 +47,10 @@ namespace AgarIo.AdminPanel.ViewModels
             IsConnected = false;
             IsConnecting = false;
             IsEditingEnabled = true;
+
+            _dispatcherTimer = new DispatcherTimer();
+            _dispatcherTimer.Tick += OnTick;
+            _dispatcherTimer.Interval = TimeSpan.FromMilliseconds(100);
 
             eventAggregator.Subscribe(this);
         }
@@ -146,6 +155,8 @@ namespace AgarIo.AdminPanel.ViewModels
 
         public void Handle(DisconnectedEvent message)
         {
+            _dispatcherTimer.Stop();
+
             IsConnected = false;
             IsConnecting = false;
             IsEditingEnabled = true;
@@ -180,6 +191,25 @@ namespace AgarIo.AdminPanel.ViewModels
             await _connection.DispatchCommandAsync<AdminCommandResponseDto>(
                 new DefineWorldAdminCommandDto { Size = 2000 },
                 _cancellationTokenSource.Token);
+        }
+
+        public void Handle(LoggedInEvent message)
+        {
+            _dispatcherTimer.Start();
+        }
+
+        private async void OnTick(object sender, EventArgs e)
+        {
+            _dispatcherTimer.Stop();
+
+            var getSnapshotCommandDto = new GetSnapshotAdminCommandDto();
+            var response =
+                await _connection.DispatchCommandAsync<GetSnapshotAdminCommandResponseDto>(getSnapshotCommandDto, CancellationToken.None);
+
+            var snapshotEvent = new SnapshotEvent { Snapshot = response };
+            _eventAggregator.PublishOnUIThread(snapshotEvent);
+
+            _dispatcherTimer.Start();
         }
     }
 }

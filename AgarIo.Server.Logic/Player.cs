@@ -21,6 +21,8 @@
             PlayerDecisions = new PlayerDecisions();
         }
 
+        public bool Join { get; set; }
+
         public string Name { get; }
 
         public string Password { get; }

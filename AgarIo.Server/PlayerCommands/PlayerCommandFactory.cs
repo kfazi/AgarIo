@@ -34,7 +34,7 @@ namespace AgarIo.Server.PlayerCommands
                     var movePlayerCommandDto = json.FromJson<MovePlayerCommandDto>();
                     return new MovePlayerCommand((float)movePlayerCommandDto.Dx, (float)movePlayerCommandDto.Dy);
                 case PlayerCommandType.Join:
-                    return new JoinPlayerCommand(_physics);
+                    return new JoinPlayerCommand();
                 case PlayerCommandType.GetView:
                     return new GetViewPlayerCommand(_physics);
                 case PlayerCommandType.Split:

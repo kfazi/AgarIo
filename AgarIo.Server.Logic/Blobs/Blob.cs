@@ -6,9 +6,9 @@
 
     public abstract class Blob
     {
-        private readonly IPhysics _physics;
-
         private const double MassSizeFactor = 100.0;
+
+        private readonly IPhysics _physics;
 
         private float _radius;
 
@@ -32,19 +32,24 @@
 
         private bool _isCreated;
 
-        protected Blob(IGame game, IPhysics physics, Vector position, float mass)
+        protected Blob(IGame game, IPhysics physics, IStateTracker stateTracker, Vector position, float mass)
         {
             _physics = physics;
 
             Game = game;
+            StateTracker = stateTracker;
             Position = position;
             Mass = mass;
 
             _isStatic = false;
             _isCreated = false;
+
+            Id = BlobIdProvider.GetId();
         }
 
         internal IGame Game { get; }
+
+        public int Id { get; }
 
         public bool IsReady => Body != null && Body.IsReady;
 
@@ -56,6 +61,7 @@
             {
                 _radius = value;
                 _radiusOverride = true;
+                StateTracker.UpdateBlob(this);
             }
         }
 
@@ -67,6 +73,7 @@
             {
                 _position = value;
                 _positionOverride = true;
+                StateTracker.UpdateBlob(this);
             }
         }
 
@@ -94,6 +101,8 @@
             }
         }
 
+        protected IStateTracker StateTracker { get; }
+
         private IBody Body
         {
             get { return _body; }
@@ -101,6 +110,7 @@
             set
             {
                 _body = value;
+                StateTracker.AddBlob(this);
                 SyncWithPhysics(true);
             }
         }
@@ -114,6 +124,11 @@
             }
             else
             {
+                if (_radius != _body.Radius)
+                {
+                    StateTracker.UpdateBlob(this);
+                }
+
                 _radius = _body.Radius;
             }
 
@@ -124,6 +139,11 @@
             }
             else
             {
+                if (_position != _body.Position)
+                {
+                    StateTracker.UpdateBlob(this);
+                }
+
                 _position = _body.Position;
             }
 
@@ -177,6 +197,7 @@
             }
 
             _physics.DestroyBody(Body);
+            StateTracker.RemoveBlob(this);
             _isCreated = false;
         }
 

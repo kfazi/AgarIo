@@ -11,10 +11,13 @@ namespace AgarIo.Server.AdminCommands
 
         private readonly IPhysics _physics;
 
-        public DefineWorldAdminCommand(int size, IPhysics physics)
+        private readonly IStateTracker _stateTracker;
+
+        public DefineWorldAdminCommand(int size, IPhysics physics, IStateTracker stateTracker)
         {
             _size = size;
             _physics = physics;
+            _stateTracker = stateTracker;
         }
 
         public override void Validate(IGame game)
@@ -24,7 +27,7 @@ namespace AgarIo.Server.AdminCommands
         public override CommandResponseDto Execute(IGame game)
         {
             game.Stop();
-            game.Start(_size, new ClassicGameMode(game, _physics));
+            game.Start(_size, new ClassicGameMode(game, _physics, _stateTracker));
 
             return Success;
         }

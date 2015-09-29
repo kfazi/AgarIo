@@ -1,8 +1,6 @@
-namespace AgarIo.Server
+namespace AgarIo.Server.Logic
 {
     using System.Collections.Generic;
-
-    using AgarIo.Server.Logic;
 
     public interface IPlayerRepository
     {

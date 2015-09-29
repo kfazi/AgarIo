@@ -65,9 +65,11 @@
 
                 _game.Update();
 
+                _connectionListener.Update();
+
                 var elapsed = stopwatch.ElapsedMilliseconds - start;
 
-                Log.Info($"Update time: {elapsed}ms");
+                //Log.Info($"Update time: {elapsed}ms");
                 await Task.Delay((int)Math.Max(Game.TickDurationMs - elapsed, 0), cancellationToken);
             }
         }

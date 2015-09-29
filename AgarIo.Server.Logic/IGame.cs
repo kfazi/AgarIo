@@ -15,7 +15,7 @@ namespace AgarIo.Server.Logic
 
         IReadOnlyList<Blob> Blobs { get; }
 
-        WorldSettings Settings { get; }
+        WorldSettings Settings { get; set; }
 
         IRandom Random { get; }
 

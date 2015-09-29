@@ -27,6 +27,7 @@
                 .ForMember(d => d.Type, o => o.UseValue(BlobType.Food));
             Mapper.CreateMap<Vector, VectorDto>();
             Mapper.CreateMap<WorldSettings, WorldSettingsDto>();
+            Mapper.CreateMap<WorldSettingsDto, WorldSettings>();
         }
     }
 }

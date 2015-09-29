@@ -100,8 +100,6 @@
             var joinResponseJson = reader.ReadLine();
             Console.WriteLine(joinResponseJson);
 
-            Thread.Sleep(100);
-
             var random = new Random();
             for (int i = 0; i < 10000; i++)
             {
@@ -114,8 +112,8 @@
                 var myBlob = getViewResponseDto.Blobs.FirstOrDefault(x => x.Name == playerName);
                 if (myBlob == null)
                 {
-                    Console.WriteLine("DEAD!!!");
-                    return;
+                    Thread.Sleep(1000);
+                    continue;
                 }
 
                 double destinationX = random.Next(-255, 256);
