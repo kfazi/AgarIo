@@ -28,7 +28,7 @@
         <TextBox x:Name="UserName" Grid.Column="5" IsEnabled="{Binding IsEditingEnabled}" />
         <Label Grid.Column="6" Content="_Password:" />
         <TextBox x:Name="Password" Grid.Column="7" IsEnabled="{Binding IsEditingEnabled}" />
-        <Button Grid.Column="8" cal:Message.Attach="ConnectAsync()" Content="Connect" IsEnabled="{Binding IsEditingEnabled}" Visibility="{Binding IsDisconnected, Converter={StaticResource BoolToVisibilityConverter}}" />
-        <Button Grid.Column="8" cal:Message.Attach="DisconnectAsync()" Content="Disconnect" Visibility="{Binding IsConnected, Converter={StaticResource BoolToVisibilityConverter}}" />
+        <Button Grid.Column="8" cal:Message.Attach="ConnectAsync()" Content="Connect" IsEnabled="{Binding IsEditingEnabled}" Visibility="{Binding IsDisconnected, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <Button Grid.Column="8" cal:Message.Attach="DisconnectAsync()" Content="Disconnect" Visibility="{Binding IsConnected, Converter={StaticResource BooleanToVisibilityConverter}}" />
     </Grid>
 </UserControl>

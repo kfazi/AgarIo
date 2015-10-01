@@ -13,7 +13,7 @@ namespace AgarIo.Server.Logic.Blobs
         {
             _physics = physics;
             Owner = owner;
-            RecombineTicksInstant = game.TickCount;
+            RecombineTicks = game.TickCount;
             ControlledByPlayer = controlledByPlayer;
 
             Mass = Game.Settings.MinPlayerBlobMass;
@@ -25,11 +25,15 @@ namespace AgarIo.Server.Logic.Blobs
 
         public Player Owner { get; }
 
-        public ulong RecombineTicksInstant { get; private set; }
+        public ulong RecombineTicks { get; private set; }
+
+        public ulong EjectMassTicks { get; private set; }
+
+        public ulong SplitTicks { get; private set; }
 
         public void UpdateRecombineInstant()
         {
-            RecombineTicksInstant = Game.TickCount + Game.Settings.RecombineWaitTicks +
+            RecombineTicks = Game.TickCount + Game.Settings.RecombineWaitTicks +
                 (ulong)(Mass * Game.Settings.RecombineWaitTimeMassFactor / Logic.Game.TickDurationMs);
         }
 
@@ -75,7 +79,7 @@ namespace AgarIo.Server.Logic.Blobs
 
         private bool OwnedBlobsCollides(PlayerBlob playerBlob)
         {
-            return Game.TickCount < playerBlob.RecombineTicksInstant || Game.TickCount < RecombineTicksInstant;
+            return Game.TickCount < playerBlob.RecombineTicks || Game.TickCount < RecombineTicks;
         }
 
         private bool CanMerge(PlayerBlob playerBlob)
@@ -107,6 +111,11 @@ namespace AgarIo.Server.Logic.Blobs
         private bool CanConsume(PlayerBlob playerBlob)
         {
             var distance = playerBlob.Position.Dist(Position) - playerBlob.Radius;
+            if (playerBlob.Owner == Owner)
+            {
+                return distance < GetEatingRange() && Mass >= playerBlob.Mass;
+            }
+
             return distance < GetEatingRange() && Mass >= playerBlob.Mass * Game.Settings.StandardEatingMassMultiplier;
         }
 
@@ -170,6 +179,11 @@ namespace AgarIo.Server.Logic.Blobs
 
         internal void Split()
         {
+            if (Game.TickCount < SplitTicks)
+            {
+                return;
+            }
+
             if (Owner.Blobs.Count >= Game.Settings.MaxPlayerBlobCount)
             {
                 return;
@@ -179,6 +193,8 @@ namespace AgarIo.Server.Logic.Blobs
             {
                 return;
             }
+
+            SplitTicks = Game.TickCount + Game.Settings.SplitWaitTicks;
 
             var newMass = Mass / 2.0f;
 
@@ -198,10 +214,17 @@ namespace AgarIo.Server.Logic.Blobs
 
         internal void EjectMass()
         {
+            if (Game.TickCount < EjectMassTicks)
+            {
+                return;
+            }
+
             if (Mass < Game.Settings.MinMassEject)
             {
                 return;
             }
+
+            EjectMassTicks = Game.TickCount + Game.Settings.EjectMassWaitTicks;
 
             var ejectMass = Game.Settings.EjectMass;
             var normalizedVelocity = Velocity.Normalize();

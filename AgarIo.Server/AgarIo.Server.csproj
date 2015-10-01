@@ -89,6 +89,7 @@
     <Compile Include="AdminCommands\AdminCommandFactory.cs" />
     <Compile Include="AdminCommands\GetSnapshotAdminCommand.cs" />
     <Compile Include="AdminCommands\StartPushingStateAdminCommand.cs" />
+    <Compile Include="AdminCommands\StopGameAdminCommand.cs" />
     <Compile Include="AdminCommands\UpdateSettingsAdminCommand.cs" />
     <Compile Include="AutofacSetup.cs" />
     <Compile Include="AutoMapperSetup.cs" />
@@ -103,10 +104,11 @@
     <Compile Include="CommandExceptions\CommandErrorCode.cs" />
     <Compile Include="CommandExceptions\CommandException.cs" />
     <Compile Include="CommandExceptions\WrongLoginException.cs" />
+    <Compile Include="IAdminCredentials.cs" />
     <Compile Include="Infrastructure\AutofacServiceWrapper.cs" />
     <Compile Include="Connections\ConnectionFactory.cs" />
     <Compile Include="Connections\ConnectionListener.cs" />
-    <Compile Include="AdminCommands\DefineWorldAdminCommand.cs" />
+    <Compile Include="AdminCommands\StartGameAdminCommand.cs" />
     <Compile Include="Infrastructure\JsonTextReaderExtensions.cs" />
     <Compile Include="PlayerCommands\EjectMassPlayerCommand.cs" />
     <Compile Include="PlayerCommands\GetViewPlayerCommand.cs" />

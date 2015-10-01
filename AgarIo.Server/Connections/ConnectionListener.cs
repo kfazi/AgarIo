@@ -29,16 +29,20 @@
 
         private readonly IPlayerRepository _playerRepository;
 
+        private readonly IAdminCredentials _adminCredentials;
+
         private readonly List<IConnection> _connections;
 
         public ConnectionListener(
             IConnectionSettings connectionSettings,
             IConnectionFactory connectionFactory,
-            IPlayerRepository playerRepository)
+            IPlayerRepository playerRepository,
+            IAdminCredentials adminCredentials)
         {
             _connectionSettings = connectionSettings;
             _connectionFactory = connectionFactory;
             _playerRepository = playerRepository;
+            _adminCredentials = adminCredentials;
 
             _connections = new List<IConnection>();
         }
@@ -73,6 +77,7 @@
                 while (!cancellationToken.IsCancellationRequested)
                 {
                     var tcpClient = await listener.AcceptTcpClientAsync().ContinueWith(t => t.Result, cancellationToken);
+                    tcpClient.NoDelay = true;
                     clientTasks.RemoveAll(x => x.IsCompleted);
                     clientTasks.Add(HandleConnection(tcpClient, cancellationToken));
                 }
@@ -130,7 +135,7 @@
         {
             if (loginDto.IsAdmin)
             {
-                return true;
+                return loginDto.Login == _adminCredentials.AdminLogin && loginDto.Password == _adminCredentials.AdminPassword;
             }
 
             var player = _playerRepository.Players.FirstOrDefault(x => x.Name == loginDto.Login);

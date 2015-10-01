@@ -58,32 +58,30 @@ namespace AgarIo.Server.Connections
 
         public void Update()
         {
-            if (_pushDataState == PushDataState.None)
+            var statePushDto = new StatePushDto();
+
+            switch (_pushDataState)
             {
-                return;
+                case PushDataState.None:
+                    return;
+                case PushDataState.First:
+                    statePushDto.AddedBlobs = Mapper.Map<BlobDto[]>(_game.Blobs);
+                    statePushDto.RemovedBlobs = new BlobDto[] { };
+                    statePushDto.UpdatedBlobs = new BlobDto[] { };
+                    _pushDataState = PushDataState.Continue;
+                    break;
+                case PushDataState.Continue:
+                    statePushDto.AddedBlobs = Mapper.Map<BlobDto[]>(_stateTracker.AddedBlobs);
+                    statePushDto.RemovedBlobs = Mapper.Map<BlobDto[]>(_stateTracker.RemovedBlobs);
+                    statePushDto.UpdatedBlobs = Mapper.Map<BlobDto[]>(_stateTracker.UpdatedBlobs);
+                    break;
             }
 
-            var statePushDto = new StatePushDto
-            {
-                WorldSize = _game.Size
-            };
-
-            if (_pushDataState == PushDataState.First)
-            {
-                statePushDto.AddedBlobs = Mapper.Map<BlobDto[]>(_game.Blobs);
-                statePushDto.RemovedBlobs = new BlobDto[] { };
-                statePushDto.UpdatedBlobs = new BlobDto[] { };
-            }
-
-            if (_pushDataState == PushDataState.Continue)
-            {
-                statePushDto.AddedBlobs = Mapper.Map<BlobDto[]>(_stateTracker.AddedBlobs);
-                statePushDto.RemovedBlobs = Mapper.Map<BlobDto[]>(_stateTracker.RemovedBlobs);
-                statePushDto.UpdatedBlobs = Mapper.Map<BlobDto[]>(_stateTracker.UpdatedBlobs);
-            }
+            statePushDto.WorldSize = _game.Size;
+            statePushDto.GameModeType = GameModeType.Classic;
+            statePushDto.CustomGameModeData = _game.GameMode.GetCustomData().ToJson();
 
             Send(statePushDto);
-            _pushDataState = PushDataState.Continue;
         }
 
         private async Task HandleIncomingDataAsync(TextReader reader, CancellationToken cancellationToken)

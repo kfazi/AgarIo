@@ -105,14 +105,13 @@
     <Compile Include="AppBootstrapper.cs" />
     <Compile Include="AppSettings.cs" />
     <Compile Include="ConnectionThread.cs" />
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Events\SnapshotEvent.cs" />
-    <Compile Include="ViewModels\ArenaViewModel.cs" />
     <Compile Include="Events\ConnectingEvent.cs" />
     <Compile Include="Events\ConnectedEvent.cs" />
     <Compile Include="Connection.cs" />
     <Compile Include="ViewModels\ConnectionViewModel.cs" />
-    <Compile Include="Converters\BoolToVisibilityConverter.cs" />
-    <Compile Include="Converters\InvertBoolConverter.cs" />
+    <Compile Include="Converters\BooleanConverter.cs" />
     <Compile Include="EventAggregationAutoSubscriptionIocModule.cs" />
     <Compile Include="Events\DisconnectedEvent.cs" />
     <Compile Include="Events\EndWorkEvent.cs" />
@@ -132,10 +131,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\UpdateableFieldView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\ArenaView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

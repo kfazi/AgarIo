@@ -53,6 +53,8 @@
   <ItemGroup>
     <Compile Include="Activity.cs" />
     <Compile Include="Blobs\BlobIdProvider.cs" />
+    <Compile Include="GameModes\ClassicGameModeData.cs" />
+    <Compile Include="GameModes\PlayerStat.cs" />
     <Compile Include="IPlayerRepository.cs" />
     <Compile Include="IStateTracker.cs" />
     <Compile Include="PlayerDecisions.cs" />

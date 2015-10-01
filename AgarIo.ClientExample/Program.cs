@@ -66,7 +66,7 @@
 
             Console.WriteLine(loginResponseJson);
 
-            var worldDto = new DefineWorldAdminCommandDto { Size = 100 };
+            var worldDto = new StartGameAdminCommandDto { Size = 100 };
             var worldJson = worldDto.ToJson();
             writer.WriteLine(worldJson);
             var worldResponseJson = reader.ReadLine();

@@ -5,5 +5,7 @@ namespace AgarIo.Server.Logic.GameModes
         void OnStart();
 
         void OnUpdate();
+
+        object GetCustomData();
     }
 }

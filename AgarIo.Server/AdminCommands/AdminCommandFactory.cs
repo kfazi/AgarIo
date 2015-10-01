@@ -19,10 +19,13 @@ namespace AgarIo.Server.AdminCommands
 
         private readonly IStateTracker _stateTracker;
 
-        public AdminCommandFactory(IPhysics physics, IStateTracker stateTracker)
+        private readonly IPlayerRepository _playerRepository;
+
+        public AdminCommandFactory(IPhysics physics, IStateTracker stateTracker, IPlayerRepository playerRepository)
         {
             _physics = physics;
             _stateTracker = stateTracker;
+            _playerRepository = playerRepository;
         }
 
         public async Task<AdminCommand> CreateAsync(TextReader reader, CancellationToken cancellationToken)
@@ -36,9 +39,11 @@ namespace AgarIo.Server.AdminCommands
             var adminCommandDto = json.FromJson<AdminCommandDto>();
             switch (adminCommandDto.Type)
             {
-                case AdminCommandType.DefineWorld:
-                    var defineWorldAdminCommandDto = json.FromJson<DefineWorldAdminCommandDto>();
-                    return new DefineWorldAdminCommand(defineWorldAdminCommandDto.Size, _physics, _stateTracker);
+                case AdminCommandType.StartGame:
+                    var startGameAdminCommandDto = json.FromJson<StartGameAdminCommandDto>();
+                    return new StartGameAdminCommand(startGameAdminCommandDto.Size, _physics, _stateTracker, _playerRepository);
+                case AdminCommandType.StopGame:
+                    return new StopGameAdminCommand();
                 case AdminCommandType.GetSnapshot:
                     return new GetSnapshotAdminCommand();
                 case AdminCommandType.StartPushingState:

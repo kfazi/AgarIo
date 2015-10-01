@@ -20,8 +20,6 @@
 
         private IBody _body;
 
-        private bool _isStatic;
-
         private bool _radiusOverride;
 
         private bool _positionOverride;
@@ -41,7 +39,7 @@
             Position = position;
             Mass = mass;
 
-            _isStatic = false;
+            IsStatic = false;
             _isCreated = false;
 
             Id = BlobIdProvider.GetId();
@@ -52,6 +50,8 @@
         public int Id { get; }
 
         public bool IsReady => Body != null && Body.IsReady;
+
+        public bool IsStatic { get; private set; }
 
         public float Radius
         {
@@ -110,7 +110,6 @@
             set
             {
                 _body = value;
-                StateTracker.AddBlob(this);
                 SyncWithPhysics(true);
             }
         }
@@ -185,7 +184,8 @@
                 return;
             }
 
-            Body = _physics.CreateBody(this, Radius, Mass, _isStatic);
+            StateTracker.AddBlob(this);
+            Body = _physics.CreateBody(this, Radius, Mass, IsStatic);
             _isCreated = true;
         }
 
@@ -213,19 +213,19 @@
 
         protected void MakeStatic()
         {
-            _isStatic = true;
+            IsStatic = true;
             if (Body != null)
             {
-                _physics.MakeBodyStatic(Body);
+                Body = _physics.MakeBodyStatic(Body);
             }
         }
 
         protected void MakeDynamic()
         {
-            _isStatic = false;
+            IsStatic = false;
             if (Body != null)
             {
-                _physics.MakeBodyDynamic(Body);
+                Body = _physics.MakeBodyDynamic(Body);
             }
         }
 

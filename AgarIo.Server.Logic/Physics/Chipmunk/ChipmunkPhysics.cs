@@ -186,10 +186,10 @@
             var mass = chipmunkBody.Mass;
             var radius = chipmunkBody.Radius;
             var position = chipmunkBody.Position;
-            var blob = (Blob)chipmunkBody.Instance.GetUserData();
-            DestroyBody(body);
+            var blob = (Blob)chipmunkBody.Instance.body.GetUserData();
             var staticBody = CreateBody(blob, radius, mass, true);
             staticBody.Position = position;
+            DestroyBody(body);
             return staticBody;
         }
 
@@ -200,11 +200,11 @@
             var radius = chipmunkBody.Radius;
             var position = chipmunkBody.Position;
             var velocity = chipmunkBody.LinearVelocity;
-            var blob = (Blob)chipmunkBody.Instance.GetUserData();
-            DestroyBody(body);
+            var blob = (Blob)chipmunkBody.Instance.body.GetUserData();
             var dynamicBody = CreateBody(blob, radius, mass, false);
             dynamicBody.Position = position;
             dynamicBody.LinearVelocity = velocity;
+            DestroyBody(body);
             return dynamicBody;
         }
 
@@ -294,12 +294,13 @@
 
         private void RecheckCollisions()
         {
-            var playerBlobs = _space.dynamicBodies
+            var dynamicBlobs = _space.dynamicBodies
                 .Select(body => body.GetUserData())
-                .OfType<PlayerBlob>()
+                .Where(blob => blob.GetType() == typeof(PlayerBlob) || blob.GetType() == typeof(EjectedMassBlob))
+                .OfType<Blob>()
                 .Where(blob => blob != null)
                 .ToArray();
-            foreach (var firstBlob in playerBlobs)
+            foreach (var firstBlob in dynamicBlobs)
             {
                 ForBlobsInRange(firstBlob.Position, firstBlob.Radius, secondBlob =>
                 {

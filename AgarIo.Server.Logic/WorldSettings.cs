@@ -54,11 +54,17 @@ namespace AgarIo.Server.Logic
 
         private const int DefaultInitialFoodAmount = 100;
 
+        private const int DefaultVirusAbsoluteMaxAmount = 30;
+
         private const uint DefaultRecombineWaitTicks = 600;
 
         private const uint DefaultFoodSpawnTicksInterval = 2;
 
         private const uint DefaultVirusSpawnTicksInterval = 2;
+
+        private const uint DefaultEjectMassWaitTicks = 10;
+
+        private const uint DefaultSplitWaitTicks = 10;
 
         public WorldSettings()
         {
@@ -88,9 +94,12 @@ namespace AgarIo.Server.Logic
             MinMassEject = DefaultMinMassEject;
             MinMassSplit = DefaultMinMassSplit;
             InitialFoodAmount = DefaultInitialFoodAmount;
+            VirusAbsoluteMaxAmount = DefaultVirusAbsoluteMaxAmount;
             RecombineWaitTicks = DefaultRecombineWaitTicks;
             FoodSpawnTicksInterval = DefaultFoodSpawnTicksInterval;
             VirusSpawnTicksInterval = DefaultVirusSpawnTicksInterval;
+            EjectMassWaitTicks = DefaultEjectMassWaitTicks;
+            SplitWaitTicks = DefaultSplitWaitTicks;
         }
 
         public float MinPlayerBlobMass { get; set; }
@@ -145,10 +154,16 @@ namespace AgarIo.Server.Logic
 
         public int InitialFoodAmount { get; set; }
 
+        public int VirusAbsoluteMaxAmount { get; set; }
+
         public uint RecombineWaitTicks { get; set; }
 
         public uint FoodSpawnTicksInterval { get; set; }
 
         public uint VirusSpawnTicksInterval { get; set; }
+
+        public uint EjectMassWaitTicks { get; set; }
+
+        public uint SplitWaitTicks { get; set; }
     }
 }

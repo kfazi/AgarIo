@@ -4,9 +4,13 @@
 
     using Westwind.Utilities.Configuration;
 
-    public class AppSettings : AppConfiguration, IConnectionSettings
+    public class AppSettings : AppConfiguration, IConnectionSettings, IAdminCredentials
     {
         public int Port { get; set; }
+
+        public string AdminLogin { get; set; }
+
+        public string AdminPassword { get; set; }
 
         protected override IConfigurationProvider OnCreateDefaultProvider(string sectionName, object configData)
         {

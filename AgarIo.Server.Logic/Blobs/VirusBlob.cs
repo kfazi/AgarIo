@@ -1,6 +1,7 @@
 ﻿namespace AgarIo.Server.Logic.Blobs
 {
     using System;
+    using System.Linq;
 
     using AgarIo.Server.Logic.Physics;
 
@@ -17,7 +18,7 @@
 
             _fed = 0;
 
-            MakeStatic();
+            MakeDynamic();
         }
 
         public double GetEatingRange()
@@ -28,6 +29,21 @@
         public double GetMinConsumerMass()
         {
             return Mass * Game.Settings.VirusMassMultiplier;
+        }
+
+        internal override void Update()
+        {
+            base.Update();
+
+            if (IsStatic)
+            {
+                return;
+            }
+
+            if (Velocity.Length < Logic.Game.Epsilon)
+            {
+                MakeStatic();
+            }
         }
 
         internal override bool OnCollision(Blob otherBlob)
@@ -58,6 +74,8 @@
             Mass += blob.Mass;
             _fed++;
 
+            Game.RemoveBlob(blob);
+
             if (_fed < Game.Settings.VirusFeedAmount)
             {
                 return;
@@ -66,8 +84,16 @@
             var normalizedVelocity = blob.Velocity.Normalize();
             var virus = new VirusBlob(Game, _physics, StateTracker, Position + normalizedVelocity)
             {
-                Velocity = normalizedVelocity * 200
+                Velocity = normalizedVelocity * Game.Settings.EjectSpeed
             };
+
+            _fed = 0;
+            Mass = Game.Settings.VirusMinMass;
+
+            if (Game.Blobs.Count(x => x.GetType() == typeof(VirusBlob)) >= Game.Settings.VirusAbsoluteMaxAmount)
+            {
+                Game.RemoveBlob(this);
+            }
 
             Game.AddBlob(virus);
         }

@@ -50,13 +50,17 @@
     <Compile Include="AdminCommands\AdminCommandDto.cs" />
     <Compile Include="AdminCommands\AdminCommandResponseDto.cs" />
     <Compile Include="AdminCommands\AdminCommandType.cs" />
-    <Compile Include="AdminCommands\DefineWorldAdminCommandDto.cs" />
+    <Compile Include="AdminCommands\StartGameAdminCommandDto.cs" />
     <Compile Include="AdminCommands\GetSnapshotAdminCommandDto.cs" />
     <Compile Include="AdminCommands\GetSnapshotAdminCommandResponseDto.cs" />
     <Compile Include="AdminCommands\StartPushingStateAdminCommandDto.cs" />
     <Compile Include="AdminCommands\StatePushDto.cs" />
+    <Compile Include="AdminCommands\StopGameAdminCommandDto.cs" />
     <Compile Include="AdminCommands\UpdateSettingsAdminCommandDto.cs" />
     <Compile Include="BlobType.cs" />
+    <Compile Include="GameModes\Classic\ClassicGameModeDataDto.cs" />
+    <Compile Include="GameModes\Classic\PlayerStatDto.cs" />
+    <Compile Include="GameModes\GameModeType.cs" />
     <Compile Include="PlayerCommands\EjectMassPlayerCommandDto.cs" />
     <Compile Include="PlayerCommands\PlayerCommandResponseDto.cs" />
     <Compile Include="PlayerCommands\GetViewPlayerCommandDto.cs" />
@@ -73,7 +77,6 @@
     <Compile Include="GetViewResponseDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VectorDto.cs" />
-    <Compile Include="WorldDto.cs" />
     <Compile Include="WorldSettingsDto.cs" />
   </ItemGroup>
   <ItemGroup>

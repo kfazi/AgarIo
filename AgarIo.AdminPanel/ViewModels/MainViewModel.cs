@@ -4,13 +4,11 @@ namespace AgarIo.AdminPanel.ViewModels
 
     public class MainViewModel : Screen
     {
-        public ArenaViewModel ArenaViewModel { get; set; }
         public ConnectionViewModel ConnectionViewModel { get; set; }
         public SettingsViewModel SettingsViewModel { get; set; }
 
-        public MainViewModel(ConnectionViewModel connectionViewModel, ArenaViewModel arenaViewModel, SettingsViewModel settingsViewModel)
+        public MainViewModel(ConnectionViewModel connectionViewModel, SettingsViewModel settingsViewModel)
         {
-            ArenaViewModel = arenaViewModel;
             SettingsViewModel = settingsViewModel;
             ConnectionViewModel = connectionViewModel;
         }

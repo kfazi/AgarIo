@@ -41,8 +41,8 @@ namespace AgarIo.AdminPanel.ViewModels
             _connection = connection;
             Host = "localhost";
             Port = 8000;
-            UserName = string.Empty;
-            Password = string.Empty;
+            UserName = "kfazi";// string.Empty;
+            Password = "tajne";//string.Empty;
 
             IsConnected = false;
             IsConnecting = false;
@@ -187,10 +187,6 @@ namespace AgarIo.AdminPanel.ViewModels
             {
                 await _eventAggregator.PublishOnUIThreadAsync(new LoggedInEvent());
             }
-
-            await _connection.DispatchCommandAsync<AdminCommandResponseDto>(
-                new DefineWorldAdminCommandDto { Size = 2000 },
-                _cancellationTokenSource.Token);
         }
 
         public void Handle(LoggedInEvent message)

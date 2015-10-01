@@ -38,6 +38,8 @@
         {
             var visibleBlobs = new HashSet<Blob>();
 
+            game.WaitForNextTick();
+
             foreach (var playerBlob in player.Blobs)
             {
                 var radius = playerBlob.Radius * game.Settings.VisibilityFactor;

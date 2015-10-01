@@ -9,5 +9,9 @@ namespace AgarIo.Contract.AdminCommands
         public BlobDto[] RemovedBlobs { get; set; }
 
         public BlobDto[] UpdatedBlobs { get; set; }
+
+        public GameModeType GameModeType { get; set; }
+
+        public string CustomGameModeData { get; set; }
     }
 }

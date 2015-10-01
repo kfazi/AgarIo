@@ -2,12 +2,14 @@
 {
     public enum AdminCommandType
     {
-        DefineWorld,
+        StartGame,
 
         GetSnapshot,
 
         StartPushingState,
 
-        UpdateSettings
+        UpdateSettings,
+
+        StopGame
     }
 }

@@ -54,10 +54,16 @@ namespace AgarIo.Contract
 
         public int InitialFoodAmount { get; set; }
 
+        public int VirusAbsoluteMaxAmount { get; set; }
+
         public uint RecombineWaitTicks { get; set; }
 
         public uint FoodSpawnTicksInterval { get; set; }
 
         public uint VirusSpawnTicksInterval { get; set; }
+
+        public uint EjectMassWaitTicks { get; set; }
+
+        public uint SplitWaitTicks { get; set; }
     }
 }

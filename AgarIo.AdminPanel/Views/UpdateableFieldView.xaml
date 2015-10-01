@@ -12,6 +12,6 @@
         </Grid.ColumnDefinitions>
 
         <TextBox Grid.Column="0" x:Name="Value" />
-        <Button Grid.Column="1" x:Name="Reset" Content="X" Visibility="{Binding IsModified, Converter={StaticResource BoolToVisibilityConverter}}" />
+        <Button Grid.Column="1" x:Name="Reset" Content="X" Visibility="{Binding IsModified, Converter={StaticResource BooleanToVisibilityConverter}}" />
     </Grid>
 </UserControl>

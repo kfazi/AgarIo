@@ -13,6 +13,8 @@
 
         private ulong _lastSpawnTick;
 
+        private bool _initialSpawn;
+
         protected EntitiesSpawner(IGame game, IPhysics physics)
         {
             Game = game;
@@ -21,16 +23,24 @@
 
         public void Initialize()
         {
-            for (var i = 0; i < InitialSpawnAmount; i++)
-            {
-                SpawnEntity();
-            }
-
-            _lastSpawnTick = Game.TickCount;
+            _initialSpawn = true;
         }
 
         public void Spawn()
         {
+            if (_initialSpawn)
+            {
+                for (var i = 0; i < InitialSpawnAmount; i++)
+                {
+                    SpawnEntity();
+                }
+
+                _initialSpawn = false;
+
+                _lastSpawnTick = Game.TickCount;
+                return;
+            }
+
             if (Game.Blobs.Count(blob => SpawnTypes.Any(type => type == blob.GetType())) >= MaxSpawnAmount)
             {
                 return;

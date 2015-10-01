@@ -18,8 +18,8 @@ namespace AgarIo.Server.AdminCommands
             var getSnapshotAdminCommandResponseDto = new GetSnapshotAdminCommandResponseDto
             {
                 WorldSize = game.Size,
-                WorldSettings = Mapper.Map<WorldSettingsDto>(game.Settings),
-                Blobs = Mapper.Map<BlobDto[]>(game.Blobs)
+                IsGameRunning = game.IsStarted,
+                WorldSettings = Mapper.Map<WorldSettingsDto>(game.Settings)
             };
 
             return getSnapshotAdminCommandResponseDto;

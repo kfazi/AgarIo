@@ -3,17 +3,22 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
 
     using AgarIo.Server.Logic.Blobs;
     using AgarIo.Server.Logic.GameModes;
     using AgarIo.Server.Logic.Physics;
     using AgarIo.SystemExtension;
 
+    using NLog;
+
     public class Game : IGame
     {
         public const double Epsilon = 0.0001;
 
         public const int TickDurationMs = 50;
+
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
         private static readonly object BlobsListLock = new object();
 
@@ -25,6 +30,8 @@
 
         private readonly IPlayerRepository _playerRepository;
 
+        private readonly AutoResetEvent _tickEvent;
+
         public Game(IRandom random, IPhysics physics, IStateTracker stateTracker, IPlayerRepository playerRepository)
         {
             _physics = physics;
@@ -34,7 +41,9 @@
 
             _blobs = new List<Blob>();
             Settings = new WorldSettings();
-            GameMode = new ClassicGameMode(this, physics, stateTracker);
+            GameMode = new ClassicGameMode(this, physics, stateTracker, playerRepository);
+
+            _tickEvent = new AutoResetEvent(false);
 
             Stop();
         }
@@ -75,10 +84,14 @@
             TickCount = 0;
 
             IsStarted = true;
+
+            Log.Info($"Started game with world size = {size}");
         }
 
         public void Stop()
         {
+            _tickEvent.Set();
+
             lock (BlobsListLock)
             {
                 foreach (var blob in _blobs)
@@ -96,6 +109,8 @@
 
             IsStarted = false;
             _physics.Stop();
+
+            Log.Info($"Stopped game");
         }
 
         public void AddBlob(Blob blob)
@@ -141,6 +156,11 @@
             return new Vector(Random.Next(-Size, Size + 1), Random.Next(-Size, Size + 1));
         }
 
+        public void WaitForNextTick()
+        {
+            _tickEvent.WaitOne();
+        }
+
         public void Update()
         {
             if (!IsStarted)
@@ -159,6 +179,8 @@
             UpdateBlobs();
 
             TickCount++;
+
+            _tickEvent.Set();
         }
 
         private void ApplyPlayerDecisions()
@@ -206,9 +228,9 @@
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
-
-                        player.PlayerDecisions.Activity = Activity.None;
                     }
+
+                    player.PlayerDecisions.Activity = Activity.None;
                 }
             }
         }

@@ -15,6 +15,8 @@ namespace AgarIo.Server.Logic
 
         IReadOnlyList<Blob> Blobs { get; }
 
+        IGameMode GameMode { get; }
+
         WorldSettings Settings { get; set; }
 
         IRandom Random { get; }
@@ -34,5 +36,7 @@ namespace AgarIo.Server.Logic
         Vector RemoveFoodAndGetSpawnPosition();
 
         Vector GetRandomPosition();
+
+        void WaitForNextTick();
     }
 }

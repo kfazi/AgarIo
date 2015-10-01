@@ -6,6 +6,6 @@ namespace AgarIo.Contract.AdminCommands
 
         public int WorldSize { get; set; }
 
-        public BlobDto[] Blobs { get; set; }
+        public bool IsGameRunning { get; set; }
     }
 }

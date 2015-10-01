@@ -8,6 +8,11 @@ namespace AgarIo.AdminPanel.ViewModels
 
         private T _originalValue;
 
+        public UpdateableFieldViewModel(T initialValue)
+        {
+            _value = initialValue;
+        }
+
         public T Value
         {
             get { return _value; }

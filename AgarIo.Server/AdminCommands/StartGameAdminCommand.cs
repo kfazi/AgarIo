@@ -5,7 +5,7 @@ namespace AgarIo.Server.AdminCommands
     using AgarIo.Server.Logic.GameModes;
     using AgarIo.Server.Logic.Physics;
 
-    public class DefineWorldAdminCommand : AdminCommand
+    public class StartGameAdminCommand : AdminCommand
     {
         private readonly int _size;
 
@@ -13,11 +13,14 @@ namespace AgarIo.Server.AdminCommands
 
         private readonly IStateTracker _stateTracker;
 
-        public DefineWorldAdminCommand(int size, IPhysics physics, IStateTracker stateTracker)
+        private readonly IPlayerRepository _playerRepository;
+
+        public StartGameAdminCommand(int size, IPhysics physics, IStateTracker stateTracker, IPlayerRepository playerRepository)
         {
             _size = size;
             _physics = physics;
             _stateTracker = stateTracker;
+            _playerRepository = playerRepository;
         }
 
         public override void Validate(IGame game)
@@ -27,7 +30,7 @@ namespace AgarIo.Server.AdminCommands
         public override CommandResponseDto Execute(IGame game)
         {
             game.Stop();
-            game.Start(_size, new ClassicGameMode(game, _physics, _stateTracker));
+            game.Start(_size, new ClassicGameMode(game, _physics, _stateTracker, _playerRepository));
 
             return Success;
         }
