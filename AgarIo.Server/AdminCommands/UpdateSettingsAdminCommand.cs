@@ -18,6 +18,11 @@ namespace AgarIo.Server.AdminCommands
 
         public override CommandResponseDto Execute(IGame game)
         {
+            if (game.Settings.TurnMinutes != _settings.TurnMinutes)
+            {
+                game.SetTurnMinutes(_settings.TurnMinutes);
+            }
+
             game.Settings = _settings;
 
             return Success;

@@ -65,5 +65,7 @@ namespace AgarIo.Contract
         public uint EjectMassWaitTicks { get; set; }
 
         public uint SplitWaitTicks { get; set; }
+
+        public uint TurnMinutes { get; set; }
     }
 }

@@ -4,7 +4,7 @@ namespace AgarIo.Server.Logic
     {
         private const float DefaultPlayerMinBlobMass = 10.0f;
 
-        private const float DefaultPlayerMaxBlobMass = 25000.0f;
+        private const float DefaultPlayerMaxBlobMass = 2500.0f;
 
         private const float DefaultVisibilityFactor = 10.0f;
 
@@ -12,11 +12,11 @@ namespace AgarIo.Server.Logic
 
         private const float DefaultRecombineWaitTimeMassFactor = 0.02f;
 
-        private const float DefaultMassLossPerTick = 0.0005f;
+        private const float DefaultMassLossPerTick = 0.001f;
 
         private const float DefaultMoveDecayPerTick = 0.75f;
 
-        private const float DefaultPlayerEatingRangeFactor = 0.4f;
+        private const float DefaultPlayerEatingRangeFactor = 0.7f;
 
         private const float DefaultVirusEatingRangeFactor = 0.4f;
 
@@ -26,17 +26,17 @@ namespace AgarIo.Server.Logic
 
         private const float DefaultStandardEatingMassMultiplier = 1.25f;
 
-        private const int DefaultMaxPlayerBlobCount = 16;
+        private const int DefaultMaxPlayerBlobCount = 8;
 
         private const int DefaultFoodSpawnAmount = 10;
 
-        private const int DefaultMaxFoodCount = 5000;
+        private const int DefaultMaxFoodCount = 1000;
 
         private const int DefaultFoodMass = 1;
 
         private const int DefaultVirusMinAmount = 10;
 
-        private const int DefaultVirusMaxAmount = 50;
+        private const int DefaultVirusMaxAmount = 20;
 
         private const int DefaultVirusMinMass = 100;
 
@@ -46,7 +46,7 @@ namespace AgarIo.Server.Logic
 
         private const int DefaultEjectMassLoss = 16;
 
-        private const int DefaultEjectSpeed = 160;
+        private const int DefaultEjectSpeed = 1600;
 
         private const int DefaultMinMassEject = 32;
 
@@ -65,6 +65,8 @@ namespace AgarIo.Server.Logic
         private const uint DefaultEjectMassWaitTicks = 10;
 
         private const uint DefaultSplitWaitTicks = 10;
+
+        private const uint DefaultTurnMinutes = 30;
 
         public WorldSettings()
         {
@@ -100,6 +102,7 @@ namespace AgarIo.Server.Logic
             VirusSpawnTicksInterval = DefaultVirusSpawnTicksInterval;
             EjectMassWaitTicks = DefaultEjectMassWaitTicks;
             SplitWaitTicks = DefaultSplitWaitTicks;
+            TurnMinutes = DefaultTurnMinutes;
         }
 
         public float MinPlayerBlobMass { get; set; }
@@ -165,5 +168,7 @@ namespace AgarIo.Server.Logic
         public uint EjectMassWaitTicks { get; set; }
 
         public uint SplitWaitTicks { get; set; }
+
+        public uint TurnMinutes { get; set; }
     }
 }

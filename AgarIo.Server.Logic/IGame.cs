@@ -7,11 +7,15 @@ namespace AgarIo.Server.Logic
     using AgarIo.Server.Logic.Physics;
     using AgarIo.SystemExtension;
 
+    using NodaTime;
+
     public interface IGame
     {
         bool IsStarted { get; }
 
         ulong TickCount { get; }
+
+        Instant TurnEndInstant { get; }
 
         IReadOnlyList<Blob> Blobs { get; }
 
@@ -36,7 +40,7 @@ namespace AgarIo.Server.Logic
         Vector RemoveFoodAndGetSpawnPosition();
 
         Vector GetRandomPosition();
-
-        void WaitForNextTick();
+        
+        void SetTurnMinutes(uint turnMinutes);
     }
 }

@@ -25,7 +25,7 @@ namespace AgarIo.AdminPanel.ViewModels
             RecombineWaitTimeMassFactor = new UpdateableFieldViewModel<float>(0.02f);
             MassLossPerTick = new UpdateableFieldViewModel<float>(0.001f);
             MoveDecayPerTick = new UpdateableFieldViewModel<float>(0.75f);
-            PlayerEatingRangeFactor = new UpdateableFieldViewModel<float>(0.8f);
+            PlayerEatingRangeFactor = new UpdateableFieldViewModel<float>(0.7f);
             VirusEatingRangeFactor = new UpdateableFieldViewModel<float>(0.4f);
             SplitSpeedFactor = new UpdateableFieldViewModel<float>(6.0f);
             VirusMassMultiplier = new UpdateableFieldViewModel<float>(1.33f);
@@ -50,6 +50,7 @@ namespace AgarIo.AdminPanel.ViewModels
             VirusSpawnTicksInterval = new UpdateableFieldViewModel<uint>(2);
             EjectMassWaitTicks = new UpdateableFieldViewModel<uint>(10);
             SplitWaitTicks = new UpdateableFieldViewModel<uint>(10);
+            TurnMinutes = new UpdateableFieldViewModel<uint>(30);
 
             WorldSize = new UpdateableFieldViewModel<int>(2000);
 
@@ -130,6 +131,8 @@ namespace AgarIo.AdminPanel.ViewModels
 
         public UpdateableFieldViewModel<uint> SplitWaitTicks { get; }
 
+        public UpdateableFieldViewModel<uint> TurnMinutes { get; }
+
         public UpdateableFieldViewModel<int> WorldSize { get; }
 
         public bool IsGameRunning
@@ -183,12 +186,18 @@ namespace AgarIo.AdminPanel.ViewModels
                 FoodSpawnTicksInterval = FoodSpawnTicksInterval.Value,
                 VirusSpawnTicksInterval = VirusSpawnTicksInterval.Value,
                 EjectMassWaitTicks = EjectMassWaitTicks.Value,
-                SplitWaitTicks = SplitWaitTicks.Value
+                SplitWaitTicks = SplitWaitTicks.Value,
+                TurnMinutes = TurnMinutes.Value
             };
         }
 
         public void Handle(SnapshotEvent message)
         {
+            if (message.Snapshot == null)
+            {
+                return;
+            }
+
             var snapshot = message.Snapshot;
             var worldSettingsDto = message.Snapshot.WorldSettings;
             MinPlayerBlobMass.OriginalValue = worldSettingsDto.MinPlayerBlobMass;
@@ -223,6 +232,7 @@ namespace AgarIo.AdminPanel.ViewModels
             VirusSpawnTicksInterval.OriginalValue = worldSettingsDto.VirusSpawnTicksInterval;
             EjectMassWaitTicks.OriginalValue = worldSettingsDto.EjectMassWaitTicks;
             SplitWaitTicks.OriginalValue = worldSettingsDto.SplitWaitTicks;
+            TurnMinutes.OriginalValue = worldSettingsDto.TurnMinutes;
             if (snapshot.WorldSize != 0)
             {
                 WorldSize.OriginalValue = snapshot.WorldSize;

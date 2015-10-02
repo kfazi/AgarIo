@@ -7,8 +7,8 @@ namespace AgarIo.Server.Connections
     public interface IConnection
     {
         Task RunAsync(
-            TextReader reader,
-            TextWriter writer,
+            StreamReader reader,
+            StreamWriter writer,
             CancellationTokenSource cancellationTokenSource);
 
         void Update();

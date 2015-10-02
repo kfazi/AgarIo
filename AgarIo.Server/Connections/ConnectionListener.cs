@@ -33,6 +33,8 @@
 
         private readonly List<IConnection> _connections;
 
+        private readonly TaskFactory _taskFactory;
+
         public ConnectionListener(
             IConnectionSettings connectionSettings,
             IConnectionFactory connectionFactory,
@@ -45,16 +47,22 @@
             _adminCredentials = adminCredentials;
 
             _connections = new List<IConnection>();
+
+            var taskScheduler = new ThreadPerTaskScheduler();
+            _taskFactory = new TaskFactory(taskScheduler);
         }
 
         public async Task RunAsync(CancellationToken cancellationToken)
         {
             var listener = new TcpListener(IPAddress.Any, _connectionSettings.Port);
+            listener.Server.NoDelay = true;
+            listener.Server.ReceiveTimeout = 2000;
+            listener.Server.SendTimeout = 2000;
             listener.Start();
 
             Log.Info($"Listening on *:{_connectionSettings.Port}");
 
-            await HandleConnectionsAsync(listener, cancellationToken);
+            await HandleConnectionsAsync(listener, cancellationToken).ConfigureAwait(false);
         }
 
         public void Update()
@@ -76,8 +84,7 @@
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    var tcpClient = await listener.AcceptTcpClientAsync().ContinueWith(t => t.Result, cancellationToken);
-                    tcpClient.NoDelay = true;
+                    var tcpClient = await listener.AcceptTcpClientAsync().ContinueWith(t => t.Result, cancellationToken).ConfigureAwait(false);
                     clientTasks.RemoveAll(x => x.IsCompleted);
                     clientTasks.Add(HandleConnection(tcpClient, cancellationToken));
                 }
@@ -94,18 +101,21 @@
 
             using (var writer = new StreamWriter(tcpClient.GetStream()))
             {
+                writer.BaseStream.WriteTimeout = 2000;
                 writer.AutoFlush = true;
                 using (var reader = new StreamReader(tcpClient.GetStream()))
                 {
-                    await HandleConnection(cancellationTokenSource, reader, writer);
+                    reader.BaseStream.ReadTimeout = 2000;
+                    var handleConnectionTask = HandleConnection(cancellationTokenSource, reader, writer);
+                    await _taskFactory.StartNew(() => handleConnectionTask, cancellationToken).Unwrap();
                 }
             }
         }
 
         private async Task HandleConnection(
             CancellationTokenSource cancellationTokenSource,
-            TextReader reader,
-            TextWriter writer)
+            StreamReader reader,
+            StreamWriter writer)
         {
             var json = await reader.ReadJsonAsync(cancellationTokenSource.Token);
 
@@ -115,19 +125,29 @@
             if (!TryAuthorize(loginDto))
             {
                 commandResponseDto.ErrorCode = (int)CommandErrorCode.WrongLogin;
+                await writer.WriteLineAsync(commandResponseDto.ToJson()).ConfigureAwait(false);
+                return;
             }
 
-            await writer.WriteLineAsync(commandResponseDto.ToJson());
+            await writer.WriteLineAsync(commandResponseDto.ToJson()).ConfigureAwait(false);
 
             var connection = _connectionFactory.Create(loginDto);
             lock (ConnectionsLock)
             {
                 _connections.Add(connection);
             }
-            await connection.RunAsync(reader, writer, cancellationTokenSource);
-            lock (ConnectionsLock)
+            try
             {
-                _connections.Remove(connection);
+                await connection.RunAsync(reader, writer, cancellationTokenSource).ConfigureAwait(false);
+            }
+            finally
+            {
+                lock (ConnectionsLock)
+                {
+                    _connections.Remove(connection);
+                }
+
+                Log.Info($"{loginDto.Login} disconnected");
             }
         }
 

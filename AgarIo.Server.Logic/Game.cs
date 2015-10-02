@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
 
     using AgarIo.Server.Logic.Blobs;
     using AgarIo.Server.Logic.GameModes;
@@ -11,6 +10,8 @@
     using AgarIo.SystemExtension;
 
     using NLog;
+
+    using NodaTime;
 
     public class Game : IGame
     {
@@ -30,20 +31,19 @@
 
         private readonly IPlayerRepository _playerRepository;
 
-        private readonly AutoResetEvent _tickEvent;
+        private readonly IClock _clock;
 
-        public Game(IRandom random, IPhysics physics, IStateTracker stateTracker, IPlayerRepository playerRepository)
+        public Game(IRandom random, IPhysics physics, IStateTracker stateTracker, IPlayerRepository playerRepository, IClock clock)
         {
             _physics = physics;
             _stateTracker = stateTracker;
             _playerRepository = playerRepository;
+            _clock = clock;
             Random = random;
 
             _blobs = new List<Blob>();
             Settings = new WorldSettings();
             GameMode = new ClassicGameMode(this, physics, stateTracker, playerRepository);
-
-            _tickEvent = new AutoResetEvent(false);
 
             Stop();
         }
@@ -53,6 +53,8 @@
         public int Size { get; private set; }
 
         public ulong TickCount { get; private set; }
+
+        public Instant TurnEndInstant { get; private set; }
 
         public IReadOnlyList<Blob> Blobs
         {
@@ -83,6 +85,8 @@
 
             TickCount = 0;
 
+            SetTurnMinutes(Settings.TurnMinutes);
+
             IsStarted = true;
 
             Log.Info($"Started game with world size = {size}");
@@ -90,7 +94,12 @@
 
         public void Stop()
         {
-            _tickEvent.Set();
+            foreach (var player in _playerRepository.Players)
+            {
+                player.SignalTick();
+            }
+
+            GameMode.OnFinish();
 
             lock (BlobsListLock)
             {
@@ -110,7 +119,13 @@
             IsStarted = false;
             _physics.Stop();
 
-            Log.Info($"Stopped game");
+            Log.Info("Stopped game");
+        }
+
+        public void Reset()
+        {
+            Stop();
+            Start(Size, GameMode);
         }
 
         public void AddBlob(Blob blob)
@@ -156,15 +171,21 @@
             return new Vector(Random.Next(-Size, Size + 1), Random.Next(-Size, Size + 1));
         }
 
-        public void WaitForNextTick()
+        public void SetTurnMinutes(uint turnMinutes)
         {
-            _tickEvent.WaitOne();
+            TurnEndInstant = _clock.Now + Duration.FromMinutes(turnMinutes);
         }
 
         public void Update()
         {
             if (!IsStarted)
             {
+                return;
+            }
+
+            if (_clock.Now >= TurnEndInstant)
+            {
+                Reset();
                 return;
             }
 
@@ -180,7 +201,11 @@
 
             TickCount++;
 
-            _tickEvent.Set();
+            foreach (var player in _playerRepository.Players)
+            {
+                player.SignalTick();
+            }
+            _playerRepository.RemoveUnregisteredAndDead();
         }
 
         private void ApplyPlayerDecisions()

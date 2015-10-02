@@ -1,5 +1,6 @@
 namespace AgarIo.AdminPanel
 {
+    using System;
     using System.IO;
     using System.Net.Sockets;
 
@@ -57,9 +58,22 @@ namespace AgarIo.AdminPanel
 
         public T SendCommand<T>(object command)
         {
-            _writer.WriteLine(command.ToJson());
-            var responseJson = _reader.ReadLine();
-            return responseJson.FromJson<T>();
+            try
+            {
+                _writer.WriteLine(command.ToJson());
+                var responseJson = _reader.ReadLine();
+                return responseJson.FromJson<T>();
+            }
+            catch (ObjectDisposedException)
+            {
+                Disconnect();
+                return default(T);
+            }
+            catch (IOException)
+            {
+                Disconnect();
+                return default(T);
+            }
         }
     }
 }

@@ -5,7 +5,7 @@ namespace AgarIo.Server.Logic
 
     public class PlayerRepository : IPlayerRepository
     {
-        private readonly object _synchronizationLock = new object();
+        private static readonly object SynchronizationLock = new object();
 
         private readonly List<Player> _registeredPlayers;
 
@@ -17,11 +17,20 @@ namespace AgarIo.Server.Logic
             _unregisteredPlayers = new List<Player>();
         }
 
-        public IEnumerable<Player> Players => _registeredPlayers.Concat(_unregisteredPlayers);
+        public IEnumerable<Player> Players
+        {
+            get
+            {
+                lock (SynchronizationLock)
+                {
+                    return _registeredPlayers.Concat(_unregisteredPlayers).ToArray();
+                }
+            }
+        } 
 
         public Player Register(string name, string password)
         {
-            lock (_synchronizationLock)
+            lock (SynchronizationLock)
             {
                 var player = _registeredPlayers.FirstOrDefault(x => x.Name == name) ?? new Player(name, password);
 
@@ -38,7 +47,7 @@ namespace AgarIo.Server.Logic
 
         public void Unregister(Player player)
         {
-            lock (_synchronizationLock)
+            lock (SynchronizationLock)
             {
                 if (_unregisteredPlayers.Contains(player))
                 {
@@ -56,7 +65,7 @@ namespace AgarIo.Server.Logic
 
         public void RemoveUnregisteredAndDead()
         {
-            lock (_synchronizationLock)
+            lock (SynchronizationLock)
             {
                 _unregisteredPlayers.RemoveAll(player => !player.Blobs.Any());
             }

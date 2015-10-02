@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
 
     using AgarIo.Server.Logic.Blobs;
 
@@ -11,12 +12,15 @@
 
         private readonly List<PlayerBlob> _blobs;
 
+        private readonly AutoResetEvent _blockEvent;
+
         public Player(string name, string password)
         {
             Name = name;
             Password = password;
 
             _blobs = new List<PlayerBlob>();
+            _blockEvent = new AutoResetEvent(false);
 
             PlayerDecisions = new PlayerDecisions();
         }
@@ -38,6 +42,16 @@
                     return _blobs.Where(blob => blob.IsReady).ToArray();
                 }
             }
+        }
+
+        public void WaitForTick()
+        {
+            _blockEvent.WaitOne();
+        }
+
+        public void SignalTick()
+        {
+            _blockEvent.Set();
         }
 
         internal void AddBlob(PlayerBlob blob)

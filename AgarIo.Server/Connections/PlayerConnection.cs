@@ -38,32 +38,43 @@
         }
 
         public async Task RunAsync(
-            TextReader reader,
-            TextWriter writer,
+            StreamReader reader,
+            StreamWriter writer,
             CancellationTokenSource cancellationTokenSource)
         {
             _player = _playerRepository.Register(_loginDto.Login, _loginDto.Password);
-            var handleIncomingDataTask = HandleIncomingDataAsync(reader, cancellationTokenSource.Token);
-            var handleOutgoingDataTask = HandleOutgoingDataAsync(writer, cancellationTokenSource.Token);
-            await Task.WhenAny(handleIncomingDataTask, handleOutgoingDataTask);
-            cancellationTokenSource.Cancel();
-            await Task.WhenAll(handleIncomingDataTask, handleOutgoingDataTask);
-            _playerRepository.Unregister(_player);
+            try
+            {
+                var handleIncomingDataTask = HandleIncomingDataAsync(reader, cancellationTokenSource.Token);
+                var handleOutgoingDataTask = HandleOutgoingDataAsync(writer, cancellationTokenSource.Token);
+                await Task.WhenAny(handleIncomingDataTask, handleOutgoingDataTask).ConfigureAwait(false);
+                cancellationTokenSource.Cancel();
+                await Task.WhenAll(handleIncomingDataTask, handleOutgoingDataTask).ConfigureAwait(false);
+            }
+            finally
+            {
+                _playerRepository.Unregister(_player);
+            }
         }
 
         public void Update()
         {
         }
 
-        private async Task HandleIncomingDataAsync(TextReader reader, CancellationToken cancellationToken)
+        private async Task HandleIncomingDataAsync(StreamReader reader, CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)
             {
                 try
                 {
-                    var command = await _playerCommandFactory.CreateAsync(reader, cancellationToken);
+                    var command = await _playerCommandFactory.CreateAsync(reader, cancellationToken).ConfigureAwait(false);
                     if (command == null)
                     {
+                        if (reader.EndOfStream)
+                        {
+                            return;
+                        }
+
                         continue;
                     }
 
@@ -81,16 +92,27 @@
                     };
                     Send(commandResponseDto);
                 }
+                catch
+                {
+                    return;
+                }
             }
         }
 
-        private async Task HandleOutgoingDataAsync(TextWriter writer, CancellationToken cancellationToken)
+        private async Task HandleOutgoingDataAsync(StreamWriter writer, CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                var data = await _dataToSend.ReceiveAsync(cancellationToken);
+                try
+                {
+                    var data = await _dataToSend.ReceiveAsync(cancellationToken).ConfigureAwait(false);
 
-                await writer.WriteLineAsync(data).WithCancellation(cancellationToken);
+                    await writer.WriteLineAsync(data).WithCancellation(cancellationToken).ConfigureAwait(false);
+                }
+                catch
+                {
+                    return;
+                }
             }
         }
 

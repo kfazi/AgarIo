@@ -2,7 +2,9 @@ namespace AgarIo.Server.Logic.GameModes
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using System.Text;
 
     using AgarIo.Server.Logic.Physics;
     using AgarIo.Server.Logic.Spawners;
@@ -32,10 +34,27 @@ namespace AgarIo.Server.Logic.GameModes
 
         public void OnStart()
         {
+            _playerStats.Clear();
+
             foreach (var spawner in _entitiesSpawners)
             {
                 spawner.Initialize();
             }
+        }
+
+        public void OnFinish()
+        {
+            var statsBuilder = new StringBuilder();
+
+            statsBuilder.AppendLine($"Game finished on {DateTime.Now}");
+            foreach (var stat in _playerStats.OrderByDescending(x => x.Score))
+            {
+                statsBuilder.AppendLine($"{stat.Name}\t\t\t{stat.Score}");
+            }
+
+            statsBuilder.AppendLine();
+
+            File.AppendAllText("stats.txt", statsBuilder.ToString(), Encoding.UTF8);
         }
 
         public void OnUpdate()
@@ -60,7 +79,7 @@ namespace AgarIo.Server.Logic.GameModes
                     _playerStats.Add(playerStat);
                 }
 
-                playerStat.Score = Math.Max(playerStat.Score, (int)player.Blobs.Sum(blob => blob.Mass));
+                playerStat.Score = player.Blobs.Any() ? Math.Max(playerStat.Score, (int)player.Blobs.Sum(blob => blob.Mass)) : 0;
             }
 
             return new ClassicGameModeData(_playerStats);

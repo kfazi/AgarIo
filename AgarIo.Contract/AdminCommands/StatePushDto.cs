@@ -1,5 +1,7 @@
 namespace AgarIo.Contract.AdminCommands
 {
+    using System;
+
     public class StatePushDto : AdminCommandResponseDto
     {
         public int WorldSize { get; set; }
@@ -13,5 +15,7 @@ namespace AgarIo.Contract.AdminCommands
         public GameModeType GameModeType { get; set; }
 
         public string CustomGameModeData { get; set; }
+
+        public DateTime TurnEndTime { get; set; }
     }
 }

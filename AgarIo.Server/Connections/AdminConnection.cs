@@ -47,13 +47,13 @@ namespace AgarIo.Server.Connections
             _pushDataState = PushDataState.None;
         }
 
-        public async Task RunAsync(TextReader reader, TextWriter writer, CancellationTokenSource cancellationTokenSource)
+        public async Task RunAsync(StreamReader reader, StreamWriter writer, CancellationTokenSource cancellationTokenSource)
         {
             var handleIncomingDataTask = HandleIncomingDataAsync(reader, cancellationTokenSource.Token);
             var handleOutgoingDataTask = HandleOutgoingDataAsync(writer, cancellationTokenSource.Token);
-            await Task.WhenAny(handleIncomingDataTask, handleOutgoingDataTask);
+            await Task.WhenAny(handleIncomingDataTask, handleOutgoingDataTask).ConfigureAwait(false);
             cancellationTokenSource.Cancel();
-            await Task.WhenAll(handleIncomingDataTask, handleOutgoingDataTask);
+            await Task.WhenAll(handleIncomingDataTask, handleOutgoingDataTask).ConfigureAwait(false);
         }
 
         public void Update()
@@ -78,21 +78,27 @@ namespace AgarIo.Server.Connections
             }
 
             statePushDto.WorldSize = _game.Size;
+            statePushDto.TurnEndTime = _game.TurnEndInstant.ToDateTimeUtc();
             statePushDto.GameModeType = GameModeType.Classic;
             statePushDto.CustomGameModeData = _game.GameMode.GetCustomData().ToJson();
 
             Send(statePushDto);
         }
 
-        private async Task HandleIncomingDataAsync(TextReader reader, CancellationToken cancellationToken)
+        private async Task HandleIncomingDataAsync(StreamReader reader, CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)
             {
                 try
                 {
-                    var command = await _adminCommandFactory.CreateAsync(reader, cancellationToken);
+                    var command = await _adminCommandFactory.CreateAsync(reader, cancellationToken).ConfigureAwait(false);
                     if (command == null)
                     {
+                        if (reader.EndOfStream)
+                        {
+                            return;
+                        }
+
                         continue;
                     }
 
@@ -122,9 +128,9 @@ namespace AgarIo.Server.Connections
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                var data = await _dataToSend.ReceiveAsync(cancellationToken);
+                var data = await _dataToSend.ReceiveAsync(cancellationToken).ConfigureAwait(false);
 
-                await writer.WriteLineAsync(data).WithCancellation(cancellationToken);
+                await writer.WriteLineAsync(data).WithCancellation(cancellationToken).ConfigureAwait(false);
             }
         }
 

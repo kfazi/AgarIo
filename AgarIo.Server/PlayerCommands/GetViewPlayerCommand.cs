@@ -38,7 +38,7 @@
         {
             var visibleBlobs = new HashSet<Blob>();
 
-            game.WaitForNextTick();
+            player.WaitForTick();
 
             foreach (var playerBlob in player.Blobs)
             {
