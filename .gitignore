@@ -181,3 +181,6 @@ Desktop.ini
 $RECYCLE.BIN/
 
 .vs/
+
+# nodejs
+**/node_modules
