@@ -9,7 +9,7 @@ let rej = () => {}
 client
   .pipe(es.split())
   .pipe(es.map(function (data, cb) {
-    res(data)
+    res(JSON.parse(data))
     cb(null)
   }))
 
